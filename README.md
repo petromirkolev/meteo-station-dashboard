@@ -1,4 +1,4 @@
-# Meteo Station Dashboard (Arduino → Serial → Node → WebSocket → Web UI)
+# Meteo Station Dashboard
 
 A real-time “Meteo + Comfort + Air/Noise” dashboard with a deterministic Replay Mode for CI-safe testing.
 
