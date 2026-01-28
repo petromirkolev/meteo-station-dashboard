@@ -1,0 +1,338 @@
+<!-- index.html -->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Meteo Station Dashboard</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+
+  <body>
+    <div class="aurora" aria-hidden="true"></div>
+
+    <!-- Sticky header -->
+    <header class="topbar" data-testid="topbar">
+      <div class="brand">
+        <div class="brand__mark" aria-hidden="true"></div>
+        <div>
+          <div class="brand__title" data-testid="app-title">Meteo Station</div>
+          <div class="brand__subtitle">Comfort • Air/Noise • Real-time</div>
+        </div>
+      </div>
+
+      <div class="topbar__right">
+        <div class="status" data-testid="connection-status">
+          <span class="dot dot--ok" aria-hidden="true"></span>
+          <span class="status__label">CONNECTED</span>
+        </div>
+
+        <div class="chip" data-testid="mode-chip" title="Live or Replay mode">
+          <span class="chip__icon" aria-hidden="true">⟲</span>
+          <span class="chip__text">REPLAY</span>
+        </div>
+
+        <div class="chip chip--mono" data-testid="last-update">
+          <span class="chip__icon" aria-hidden="true">⏱</span>
+          <span class="chip__text">--:--:--</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="grid">
+        <!-- Temperature -->
+        <article class="card card--temp" data-testid="card-temp">
+          <header class="card__head">
+            <h2 class="card__title">Temperature</h2>
+            <div class="badge badge--cyan" data-testid="badge-temp-state">
+              stable
+            </div>
+          </header>
+
+          <div class="metric">
+            <div class="metric__value" data-testid="temp-value">--.-</div>
+            <div class="metric__unit">°C</div>
+          </div>
+
+          <div class="meta">
+            <div class="meta__item">
+              <span class="meta__label">Feels like</span>
+              <span class="meta__value" data-testid="feels-like-value"
+                >--.-°C</span
+              >
+            </div>
+            <div class="meta__item">
+              <span class="meta__label">Heat index</span>
+              <span class="meta__value" data-testid="heat-index-value"
+                >--.-°C</span
+              >
+            </div>
+          </div>
+
+          <div
+            class="spark"
+            data-testid="spark-temp"
+            aria-label="Temperature trend">
+            <div class="spark__bar"></div>
+          </div>
+        </article>
+
+        <!-- Humidity -->
+        <article class="card card--humid" data-testid="card-humidity">
+          <header class="card__head">
+            <h2 class="card__title">Humidity</h2>
+            <div class="badge badge--pink" data-testid="badge-comfort">OK</div>
+          </header>
+
+          <div class="metric">
+            <div class="metric__value" data-testid="humidity-value">--.-</div>
+            <div class="metric__unit">%</div>
+          </div>
+
+          <div class="meta">
+            <div class="meta__item">
+              <span class="meta__label">Dew point</span>
+              <span class="meta__value" data-testid="dew-point-value"
+                >--.-°C</span
+              >
+            </div>
+            <div class="meta__item">
+              <span class="meta__label">Comfort</span>
+              <span class="meta__value" data-testid="comfort-label">--</span>
+            </div>
+          </div>
+
+          <div
+            class="spark"
+            data-testid="spark-humidity"
+            aria-label="Humidity trend">
+            <div class="spark__bar"></div>
+          </div>
+        </article>
+
+        <!-- Pressure -->
+        <article class="card card--press" data-testid="card-pressure">
+          <header class="card__head">
+            <h2 class="card__title">Pressure</h2>
+            <div class="badge badge--violet" data-testid="badge-pressure-trend">
+              stable
+            </div>
+          </header>
+
+          <div class="metric">
+            <div class="metric__value" data-testid="pressure-value">----</div>
+            <div class="metric__unit">hPa</div>
+          </div>
+
+          <div class="meta">
+            <div class="meta__item">
+              <span class="meta__label">Trend</span>
+              <span class="meta__value" data-testid="pressure-trend-value"
+                >--</span
+              >
+            </div>
+            <div class="meta__item">
+              <span class="meta__label">Δ (1h)</span>
+              <span class="meta__value" data-testid="pressure-delta-value"
+                >--.-</span
+              >
+            </div>
+          </div>
+
+          <div
+            class="spark"
+            data-testid="spark-pressure"
+            aria-label="Pressure trend">
+            <div class="spark__bar"></div>
+          </div>
+        </article>
+
+        <!-- Light -->
+        <article class="card card--light" data-testid="card-light">
+          <header class="card__head">
+            <h2 class="card__title">Light</h2>
+            <div class="badge badge--amber" data-testid="badge-light-level">
+              mid
+            </div>
+          </header>
+
+          <div class="metric">
+            <div class="metric__value" data-testid="light-value">--</div>
+            <div class="metric__unit">lvl</div>
+          </div>
+
+          <div class="meter" data-testid="light-meter" aria-label="Light meter">
+            <div class="meter__track">
+              <div class="meter__fill" style="--pct: 45%"></div>
+            </div>
+            <div class="meter__labels">
+              <span>dark</span>
+              <span>bright</span>
+            </div>
+          </div>
+
+          <div class="meta">
+            <div class="meta__item">
+              <span class="meta__label">Status</span>
+              <span class="meta__value" data-testid="light-status">--</span>
+            </div>
+            <div class="meta__item">
+              <span class="meta__label">Peak</span>
+              <span class="meta__value" data-testid="light-peak">--</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Noise -->
+        <article class="card card--noise" data-testid="card-noise">
+          <header class="card__head">
+            <h2 class="card__title">Noise</h2>
+            <div class="badge badge--orange" data-testid="badge-noise-events">
+              0 spikes
+            </div>
+          </header>
+
+          <div class="metric">
+            <div class="metric__value" data-testid="noise-value">--</div>
+            <div class="metric__unit">idx</div>
+          </div>
+
+          <div class="meter" data-testid="noise-meter" aria-label="Noise meter">
+            <div class="meter__track">
+              <div
+                class="meter__fill meter__fill--orange"
+                style="--pct: 20%"></div>
+            </div>
+            <div class="meter__labels">
+              <span>quiet</span>
+              <span>loud</span>
+            </div>
+          </div>
+
+          <div class="meta">
+            <div class="meta__item">
+              <span class="meta__label">Last spike</span>
+              <span class="meta__value" data-testid="noise-last-spike"
+                >--:--:--</span
+              >
+            </div>
+            <div class="meta__item">
+              <span class="meta__label">Threshold</span>
+              <span class="meta__value" data-testid="noise-threshold">--</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Air Quality (optional) -->
+        <article class="card card--air" data-testid="card-air">
+          <header class="card__head">
+            <h2 class="card__title">Air Quality</h2>
+            <div class="badge badge--lime" data-testid="badge-air-label">
+              N/A
+            </div>
+          </header>
+
+          <div class="air-grid">
+            <div class="air-kpi">
+              <div class="air-kpi__label">eCO2</div>
+              <div class="air-kpi__value" data-testid="eco2-value">----</div>
+              <div class="air-kpi__unit">ppm</div>
+            </div>
+            <div class="air-kpi">
+              <div class="air-kpi__label">TVOC</div>
+              <div class="air-kpi__value" data-testid="tvoc-value">----</div>
+              <div class="air-kpi__unit">ppb</div>
+            </div>
+            <div class="air-kpi">
+              <div class="air-kpi__label">PM2.5</div>
+              <div class="air-kpi__value" data-testid="pm25-value">----</div>
+              <div class="air-kpi__unit">µg/m³</div>
+            </div>
+          </div>
+
+          <div class="meta">
+            <div class="meta__item">
+              <span class="meta__label">Ventilation</span>
+              <span class="meta__value" data-testid="ventilation-label"
+                >--</span
+              >
+            </div>
+            <div class="meta__item">
+              <span class="meta__label">Alert</span>
+              <span class="meta__value" data-testid="air-alert">--</span>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <aside class="side">
+        <section class="panel" data-testid="panel-alerts">
+          <header class="panel__head">
+            <h2 class="panel__title">Alerts</h2>
+            <span class="panel__hint" data-testid="alerts-count">0 active</span>
+          </header>
+
+          <ul class="list list--alerts" data-testid="alerts-list">
+            <li class="list__empty" data-testid="alerts-empty">
+              No alerts. The universe is calm.
+            </li>
+          </ul>
+        </section>
+
+        <section class="panel" data-testid="panel-events">
+          <header class="panel__head">
+            <h2 class="panel__title">Event log</h2>
+            <span class="panel__hint" data-testid="events-count">0</span>
+          </header>
+
+          <ul class="list" data-testid="events-list">
+            <li class="list__empty" data-testid="events-empty">
+              No events yet. Go make some weather.
+            </li>
+          </ul>
+        </section>
+
+        <section class="panel" data-testid="panel-controls">
+          <header class="panel__head">
+            <h2 class="panel__title">Controls</h2>
+            <span class="panel__hint">UI-only placeholder</span>
+          </header>
+
+          <div class="controls">
+            <button
+              class="btn btn--primary"
+              type="button"
+              data-testid="btn-toggle-mode">
+              Toggle Live/Replay
+            </button>
+            <button class="btn" type="button" data-testid="btn-clear-events">
+              Clear log
+            </button>
+
+            <div class="toggle" data-testid="toggle-alerts-sound">
+              <div class="toggle__left">
+                <div class="toggle__title">Alert sound</div>
+                <div class="toggle__desc">Fun in dev, off in CI.</div>
+              </div>
+              <div class="toggle__switch" aria-hidden="true">
+                <div class="toggle__knob"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </aside>
+    </main>
+
+    <footer class="footer" data-testid="footer">
+      <div class="footer__left">
+        <span class="mono">SensorFrame v0</span>
+        <span class="sep">•</span>
+        <span class="muted">deterministic replay + CI-safe E2E</span>
+      </div>
+      <div class="footer__right mono" data-testid="build-info">
+        build: local-dev
+      </div>
+    </footer>
+  </body>
+</html>
