@@ -135,14 +135,18 @@ npm run dev
 Run (Live Mode)
 ```
 
-# Arduino: flash the sketch in /arduino (outputs NDJSON @ 115200)
+# 3) flash the sketch in /arduino (outputs NDJSON @ 115200)
 
-# Bridge: start live mode and point it at your serial port
+# 4) tart live mode and point it at your serial port
 
 ```bash
 cd bridge
 npm run dev:live -- --port /dev/cu.usbmodemXXXX --baud 115200
+```
+
 Tests (Replay Mode only)
+
+```bash
 cd tests
 npm install
 npx playwright install
