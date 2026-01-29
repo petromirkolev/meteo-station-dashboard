@@ -137,7 +137,7 @@ Run (Live Mode)
 
 # 3) flash the sketch in /arduino (outputs NDJSON @ 115200)
 
-# 4) tart live mode and point it at your serial port
+# 4) start live mode and point it at your serial port
 
 ```bash
 cd bridge
