@@ -209,6 +209,27 @@ body {
 }
 
 /* Layout */
+
+/* allow grid items to shrink instead of overflowing */
+.layout > *,
+.grid > * {
+  min-width: 0;
+}
+
+/* ensure flex rows inside cards can shrink */
+.card__head,
+.metric,
+.meta__item {
+  min-width: 0;
+}
+
+/* if any meta values get too wide, ellipsis instead of clipping */
+.meta__value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
 .layout {
   padding: 18px 18px 6px;
   display: grid;
