@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/petromirkolev/meteo-station-dashboard/issues"
   },
-  "homepage": "https://github.com/petromirkolev/meteo-station-dashboard#readme"
+  "homepage": "https://github.com/petromirkolev/meteo-station-dashboard#readme",
+  "dependencies": {
+    "ws": "^8.19.0"
+  }
 }
