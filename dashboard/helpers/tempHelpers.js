@@ -2,18 +2,16 @@ const temperatureSamples = [];
 
 /**
  * Adds a temperature sample to the list
- * @param ts - Timestamp in ms
- * @param tC - Temperature in C
- * @param keepMs - How long to keep samples in ms
+ * @param {number} ts Timestamp in ms
+ * @param {number} tC Temperature in C
+ * @param {number} keepMs How long to keep samples in ms
  */
-
 function addTemperatureSample(ts, tC, keepMs = 3 * 60 * 60 * 1000) {
   if (typeof ts !== 'number' || !Number.isFinite(ts)) return;
   if (typeof tC !== 'number' || !Number.isFinite(tC)) return;
 
   temperatureSamples.push({ ts, tC });
 
-  // Remove old samples
   const cutoff = ts - keepMs;
   while (temperatureSamples.length && temperatureSamples[0].ts < cutoff) {
     temperatureSamples.shift();
@@ -21,32 +19,36 @@ function addTemperatureSample(ts, tC, keepMs = 3 * 60 * 60 * 1000) {
 }
 
 /**
- * Determines the temperature trend based on the latest sample
- * @param thresholdTemp - The threshold temperature to determine trend
- * @returns 'rising', 'falling', 'stable', or 'unknown'
+ * Determines temperature "state" based on latest sample vs threshold
+ * (Not a real trend yet; just a threshold classification.)
+ * @param {number} thresholdTemp
+ * @returns {'rising'|'falling'|'stable'|'unknown'}
  */
-
 function temperatureTrend(thresholdTemp = 22) {
-  const temperature = temperatureSamples[temperatureSamples.length - 1];
-
-  if (typeof temperature.tC !== 'number' || !Number.isFinite(temperature.tC))
+  const last = temperatureSamples[temperatureSamples.length - 1];
+  if (!last) return 'unknown';
+  if (typeof last.tC !== 'number' || !Number.isFinite(last.tC))
     return 'unknown';
 
-  if (temperature.tC > thresholdTemp) return 'rising';
-  if (temperature.tC < thresholdTemp) return 'falling';
+  if (last.tC > thresholdTemp) return 'rising';
+  if (last.tC < thresholdTemp) return 'falling';
   return 'stable';
 }
 
 /**
  * Calculates the heat index in Celsius
- * @param tC - Temperature in C
- * @param rh - Relative humidity
- * @returns the heat index in C
+ * Returns NUMBER or null (controller formats)
+ * @param {number} tC
+ * @param {number} rh
+ * @returns {number|null}
  */
-
 function heatIndexC(tC, rh) {
+  if (typeof tC !== 'number' || typeof rh !== 'number') return null;
+  if (!Number.isFinite(tC) || !Number.isFinite(rh)) return null;
+
   const tF = (tC * 9) / 5 + 32;
   const R = rh;
+
   let hiF =
     -42.379 +
     2.04901523 * tF +
@@ -65,22 +67,20 @@ function heatIndexC(tC, rh) {
   }
 
   const hiC = ((hiF - 32) * 5) / 9;
-  return hiC || '--';
+  return Number.isFinite(hiC) ? hiC : null;
 }
 
 /**
- * Calculates the 'feels like' temperature in Celsius
- * @param tC - Temperature in C
- * @param rh - Relative humidity
- * @returns the 'feels like' temperature in C
+ * Calculates "feels like" temperature in Celsius
+ * (For now: max(actual temp, heat index))
+ * @param {number} tC
+ * @param {number} rh
+ * @returns {number|null}
  */
-
 function feelsLikeC(tC, rh) {
   const hi = heatIndexC(tC, rh);
-  if (typeof hi === 'number') {
-    return Math.max(tC, hi);
-  }
-  return tC;
+  if (hi === null) return Number.isFinite(tC) ? tC : null;
+  return Math.max(tC, hi);
 }
 
 export { feelsLikeC, heatIndexC, addTemperatureSample, temperatureTrend };

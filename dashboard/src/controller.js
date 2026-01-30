@@ -16,7 +16,7 @@ import {
   addPressureSample,
   pressureDeltaHpa,
   pressureTrend,
-} from '../helpers/pressureHelper.js';
+} from '../helpers/pressureHelpers.js';
 
 /**
  * Controller function to process incoming meteorological data messages
