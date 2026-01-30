@@ -2,10 +2,14 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const { WebSocketServer } = require('ws');
+
 const PORT = process.env.PORT || 5173;
+const MODE = (process.env.MODE || 'replay').toLowerCase(); // 'replay' | 'live'
+
 const ROOT = path.join(__dirname, '..');
 const WEB_ROOT = path.join(ROOT, 'dashboard');
 
+// Static file server helpers
 function contentTypeFor(filePath) {
   const ext = path.extname(filePath).toLowerCase();
   if (ext === '.html') return 'text/html; charset=utf-8';
@@ -41,6 +45,7 @@ const server = http.createServer((req, res) => {
   return serveFile(res, filePath, contentTypeFor(filePath));
 });
 
+// WebSocket
 const wss = new WebSocketServer({ server, path: '/ws' });
 
 function broadcast(obj) {
@@ -51,42 +56,130 @@ function broadcast(obj) {
 }
 
 wss.on('connection', (ws) => {
-  ws.send(JSON.stringify({ type: 'hello', ts: Date.now(), source: 'replay' }));
+  ws.send(
+    JSON.stringify({ type: 'hello', ts: Date.now(), source: currentMode }),
+  );
 });
 
-const replayPath = path.join(ROOT, 'replay', 'sample.ndjson');
+let currentMode = MODE;
+let replayTimer = null;
+let serialPort = null;
+let parser = null;
 
-function loadReplayLines() {
+function startReplay({ intervalMs = 1000 } = {}) {
+  const replayPath = path.join(ROOT, 'replay', 'sample.ndjson');
+
   const raw = fs.readFileSync(replayPath, 'utf-8');
-  return raw
+  const lines = raw
     .split('\n')
     .map((l) => l.trim())
     .filter(Boolean);
+
+  if (!lines.length) {
+    console.warn('Replay dataset is empty:', replayPath);
+    return;
+  }
+
+  let i = 0;
+
+  replayTimer = setInterval(() => {
+    const line = lines[i];
+    i = (i + 1) % lines.length;
+
+    try {
+      const frame = JSON.parse(line);
+      broadcast({ type: 'frame', ts: Date.now(), source: 'replay', frame });
+    } catch {}
+  }, intervalMs);
+
+  console.log(`Replay streaming ON (interval: ${intervalMs}ms)`);
 }
 
-let lines = loadReplayLines();
-let i = 0;
+function stopReplay() {
+  if (replayTimer) clearInterval(replayTimer);
+  replayTimer = null;
+  console.log('Replay streaming OFF');
+}
 
-setInterval(() => {
-  if (lines.length === 0) return;
+function startLiveSerial() {
+  const { SerialPort } = require('serialport');
+  const { ReadlineParser } = require('@serialport/parser-readline');
 
-  const line = lines[i];
-  i = (i + 1) % lines.length;
+  const portPath = process.env.SERIAL_PORT;
+  const baudRate = Number(process.env.BAUD || 115200);
 
-  try {
-    const frame = JSON.parse(line);
-    broadcast({
-      type: 'frame',
-      ts: Date.now(),
-      source: 'replay',
-      frame,
-    });
-  } catch {
-    // skip bad line
+  if (!portPath) {
+    console.error('Missing SERIAL_PORT env var for live mode.');
+    console.error(
+      'Example: MODE=live SERIAL_PORT=/dev/tty.usbmodem123 BAUD=115200 node bridge/replay-server.js',
+    );
+    return;
   }
-}, 5000);
 
+  serialPort = new SerialPort({ path: portPath, baudRate });
+  parser = serialPort.pipe(new ReadlineParser({ delimiter: '\n' }));
+
+  serialPort.on('open', () =>
+    console.log(`Serial open: ${portPath} @ ${baudRate}`),
+  );
+  serialPort.on('error', (e) => console.error('Serial error:', e.message));
+
+  parser.on('data', (line) => {
+    const trimmed = String(line).trim();
+    if (!trimmed) return;
+
+    try {
+      const frame = JSON.parse(trimmed);
+      broadcast({ type: 'frame', ts: Date.now(), source: 'live', frame });
+    } catch {}
+  });
+
+  console.log('Live serial streaming ON');
+}
+
+function stopLiveSerial() {
+  if (parser) {
+    try {
+      parser.removeAllListeners('data');
+    } catch {}
+    parser = null;
+  }
+
+  if (serialPort) {
+    try {
+      serialPort.close();
+    } catch {}
+    serialPort = null;
+  }
+
+  console.log('Live serial streaming OFF');
+}
+
+function startMode(mode) {
+  currentMode = mode;
+
+  if (mode === 'live') startLiveSerial();
+  else startReplay({ intervalMs: 1000 });
+}
+
+function stopMode(mode) {
+  if (mode === 'live') stopLiveSerial();
+  else stopReplay();
+}
+
+function switchMode(nextMode) {
+  if (nextMode === currentMode) return;
+
+  stopMode(currentMode);
+  startMode(nextMode);
+  broadcast({ type: 'mode', ts: Date.now(), source: currentMode });
+}
+
+// Boot
 server.listen(PORT, () => {
   console.log(`Dev server running: http://localhost:${PORT}`);
   console.log(`WebSocket endpoint: ws://localhost:${PORT}/ws`);
+  console.log(`MODE=${MODE}`);
+
+  startMode(MODE);
 });
