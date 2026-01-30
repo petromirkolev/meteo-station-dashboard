@@ -40,7 +40,6 @@ function fmtInt(x, fallback) {
 }
 function fmtTime(ts) {
   const t = typeof ts === 'number' ? ts : Date.now();
-  // 24h display without seconds drama; change if you prefer
   return new Date(t).toLocaleTimeString([], {
     hour: '2-digit',
     minute: '2-digit',
