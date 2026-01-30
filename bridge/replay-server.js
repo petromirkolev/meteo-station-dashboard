@@ -2,7 +2,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const { WebSocketServer } = require('ws');
-const { resolveSerialPort } = require('./resolve-port');
+const { resolveSerialPort } = require('./get-port');
 
 const PORT = process.env.PORT || 5173;
 const MODE = (process.env.MODE || 'replay').toLowerCase(); // 'replay' | 'live'
