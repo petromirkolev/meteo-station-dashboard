@@ -67,5 +67,5 @@ void loop() {
   Serial.print(gasRaw);
   Serial.println("}");
 
-  delay(2000);
+  delay(5000);
 }

@@ -1,3 +1,5 @@
+import { controller } from './controller.js';
+
 function renderData(vm) {
   const domData = (tid) => document.querySelector(`[data-testid="${tid}"]`);
 
@@ -22,4 +24,21 @@ function renderData(vm) {
   domData('pressure-trend-value').textContent = vm.trend;
 }
 
-export { renderData };
+function bindEvents() {
+  const wsUrl =
+    (location.protocol === 'https:' ? 'wss://' : 'ws://') +
+    location.host +
+    '/ws';
+  const ws = new WebSocket(wsUrl);
+
+  ws.addEventListener('message', (ev) => {
+    const msg = JSON.parse(ev.data);
+    if (msg.type !== 'frame' || !msg.frame) return;
+    const vm = controller(msg);
+    renderData(vm);
+  });
+
+  document.querySelector('.toggle__knob').addEventListener('click', () => {});
+}
+
+export { renderData, bindEvents };

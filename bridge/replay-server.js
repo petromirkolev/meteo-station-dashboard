@@ -87,7 +87,7 @@ setInterval(() => {
   } catch {
     // skip bad line
   }
-}, 1000);
+}, 5000);
 
 server.listen(PORT, () => {
   console.log(`Dev server running: http://localhost:${PORT}`);

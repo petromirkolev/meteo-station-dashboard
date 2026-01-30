@@ -233,16 +233,10 @@ body {
 .layout {
   padding: 18px 18px 6px;
   display: grid;
-  grid-template-columns: 1fr minmax(280px, 360px);
+  grid-template-columns: 1fr; /* single column now */
   gap: 18px;
   max-width: 1320px;
   margin: 0 auto;
-}
-
-@media (max-width: 980px) {
-  .layout {
-    grid-template-columns: 1fr;
-  }
 }
 
 .grid {

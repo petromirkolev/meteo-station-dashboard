@@ -1,13 +1,9 @@
-import { controller } from './controller.js';
-import { renderData } from './render.js';
+/**
+ * Fires up the WebSocket listener,
+ * sends data to controller
+ * and renders the data
+ */
 
-const wsUrl =
-  (location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + '/ws';
-const ws = new WebSocket(wsUrl);
+import { bindEvents } from './render.js';
 
-ws.addEventListener('message', (ev) => {
-  const msg = JSON.parse(ev.data);
-  if (msg.type !== 'frame' || !msg.frame) return;
-  const vm = controller(msg);
-  renderData(vm);
-});
+bindEvents();
