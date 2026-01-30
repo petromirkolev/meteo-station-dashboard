@@ -172,6 +172,89 @@ body {
   font-weight: 700;
 }
 
+/* 1) Smooth press */
+.record {
+  appearance: none;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.06);
+  color: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 999px;
+  position: relative;
+  overflow: hidden; /* needed for ripple */
+  transition:
+    transform 120ms ease,
+    filter 120ms ease,
+    border-color 120ms ease;
+}
+
+.record:focus-visible {
+  outline: 2px solid rgba(45, 226, 230, 0.75);
+  outline-offset: 3px;
+}
+
+.record:active {
+  transform: translateY(1px) scale(0.98);
+  filter: brightness(1.08);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.record::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(255, 46, 147, 0.28),
+    transparent 55%
+  );
+
+  opacity: 0;
+  transform: scale(0.6);
+}
+
+.record:active::after {
+  animation: recordRipple 260ms ease-out;
+}
+
+.record[aria-pressed='true'] .dot {
+  background: #ff2e93;
+  box-shadow: 0 0 0 6px rgba(255, 46, 147, 0.12);
+  animation: recBlink 900ms ease-in-out infinite;
+}
+
+@keyframes recBlink {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.92);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.12);
+  }
+}
+
+@keyframes recordRipple {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  40% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.2);
+  }
+}
+
 .dot {
   width: 10px;
   height: 10px;
