@@ -6,21 +6,41 @@ import {
   pressureTrend,
 } from '../helpers/pressureHelper.js';
 
+import {
+  addTemperatureSample,
+  temperatureTrend,
+} from '../helpers/tempHelpers.js';
+
+import {
+  addHumiditySample,
+  humidityTrend,
+} from '../helpers/humidityHelpers.js';
+
+/**
+ * Process incoming meteorological data message and update samples.
+ * @param {Object} msg - Incoming message containing meteorological data.
+ * @returns {Object} Processed data including temperature, humidity, pressure, and derived metrics.
+ */
+
 export function controller(msg) {
   addPressureSample(new Date(msg.ts).getTime(), msg.frame.pHpa);
+  addTemperatureSample(new Date(msg.ts).getTime(), msg.frame.tC);
+  addHumiditySample(new Date(msg.ts).getTime(), msg.frame.rh);
 
-  const frame = msg.frame;
-  const tC = Number(frame.tC.toFixed(1));
-  const rh = Number(frame.rh.toFixed(1));
-  const pHpa = Number(frame.pHpa.toFixed(1));
-  const heatIndex = heatIndexC(tC, rh).toFixed(1);
-  const feelsLike = feelsLikeC(tC, rh).toFixed(1);
-  const dewPoint = dewPointC(tC, rh).toFixed(1);
-  const comfort = comfortLabel(rh);
-  const time = new Date(msg.ts).toLocaleTimeString();
-  const pressureDelta = pressureDeltaHpa().toFixed(2);
-  const trend = pressureTrend();
-  const gasRaw = Number(frame.gasRaw.toFixed(1));
+  const frame = msg.frame || {};
+  const tC = frame.tC || '--';
+  const rh = frame.rh || '--';
+  const pHpa = frame.pHpa || '--';
+  const heatIndex = heatIndexC(tC, rh) || '--';
+  const feelsLike = feelsLikeC(tC, rh) || '--';
+  const dewPoint = dewPointC(tC, rh) || '--';
+  const comfort = comfortLabel(rh) || '--';
+  const time = new Date(msg.ts).toLocaleTimeString() || '--';
+  const pressureDelta = pressureDeltaHpa() || '--';
+  const trend = pressureTrend() || '--';
+  const gasRaw = frame.gasRaw || '--';
+  const tempTrend = temperatureTrend() || '--';
+  const humTrend = humidityTrend() || '--';
 
   return {
     tC,
@@ -34,5 +54,7 @@ export function controller(msg) {
     pressureDelta,
     trend,
     gasRaw,
+    tempTrend,
+    humTrend,
   };
 }

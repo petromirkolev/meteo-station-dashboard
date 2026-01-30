@@ -2,11 +2,8 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const { WebSocketServer } = require('ws');
-
 const PORT = process.env.PORT || 5173;
-
 const ROOT = path.join(__dirname, '..');
-
 const WEB_ROOT = path.join(ROOT, 'dashboard');
 
 function contentTypeFor(filePath) {

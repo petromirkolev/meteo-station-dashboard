@@ -1,5 +1,13 @@
 const pressureSamples = [];
 
+/**
+ * Add a pressure sample
+ * @param ts Timestamp in ms
+ * @param pHpa Pressure in hPa
+ * @param keepMs How long to keep samples in ms
+ * @returns {void}
+ */
+
 function addPressureSample(ts, pHpa, keepMs = 3 * 60 * 60 * 1000) {
   if (typeof ts !== 'number' || !Number.isFinite(ts)) return;
   if (typeof pHpa !== 'number' || !Number.isFinite(pHpa)) return;
@@ -12,6 +20,12 @@ function addPressureSample(ts, pHpa, keepMs = 3 * 60 * 60 * 1000) {
     pressureSamples.shift();
   }
 }
+
+/**
+ * Calculate pressure delta over a time window
+ * @param windowMs Time window in ms
+ * @returns {number|null} Pressure delta in hPa or null if not enough data
+ */
 
 function pressureDeltaHpa(windowMs = 60 * 60 * 1000) {
   if (pressureSamples.length < 2) return null;
@@ -28,8 +42,14 @@ function pressureDeltaHpa(windowMs = 60 * 60 * 1000) {
   }
 
   if (!ref) return null;
-  return latest.pHpa - ref.pHpa;
+  return (latest.pHpa - ref.pHpa).toFixed(1);
 }
+
+/** Determine pressure trend
+ * @param windowMs Time window in ms
+ * @param thresholdHpa Threshold in hPa to consider as rising/falling
+ * @returns {'rising'|'falling'|'stable'|'unknown'} Pressure trend
+ */
 
 function pressureTrend(windowMs = 60 * 60 * 1000, thresholdHpa = 0.8) {
   const d = pressureDeltaHpa(windowMs);
