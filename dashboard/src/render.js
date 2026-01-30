@@ -22,6 +22,9 @@ function renderData(vm) {
   domData('comfort-label').textContent = vm.comfort;
   domData('pressure-delta-value').textContent = vm.pressureDelta;
   domData('pressure-trend-value').textContent = vm.trend;
+  domData('eco2-value').textContent = vm.gasRaw;
+  domData('tvoc-value').textContent = vm.gasRaw;
+  domData('pm25-value').textContent = vm.gasRaw;
 }
 
 function bindEvents() {

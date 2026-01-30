@@ -20,6 +20,7 @@ export function controller(msg) {
   const time = new Date(msg.ts).toLocaleTimeString();
   const pressureDelta = pressureDeltaHpa().toFixed(2);
   const trend = pressureTrend();
+  const gasRaw = Number(frame.gasRaw.toFixed(1));
 
   return {
     tC,
@@ -32,5 +33,6 @@ export function controller(msg) {
     time,
     pressureDelta,
     trend,
+    gasRaw,
   };
 }
