@@ -2,6 +2,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const { WebSocketServer } = require('ws');
+const { resolveSerialPort } = require('./resolve-port');
 
 const PORT = process.env.PORT || 5173;
 const MODE = (process.env.MODE || 'replay').toLowerCase(); // 'replay' | 'live'
@@ -101,18 +102,25 @@ function stopReplay() {
   console.log('Replay streaming OFF');
 }
 
-function startLiveSerial() {
+async function startLiveSerial() {
+  let serialPort = null;
+
   const { SerialPort } = require('serialport');
   const { ReadlineParser } = require('@serialport/parser-readline');
 
-  const portPath = process.env.SERIAL_PORT;
+  let portPath = process.env.SERIAL_PORT;
   const baudRate = Number(process.env.BAUD || 115200);
 
   if (!portPath) {
-    console.error('Missing SERIAL_PORT env var for live mode.');
+    portPath = await resolveSerialPort();
+  }
+
+  if (!portPath) {
     console.error(
-      'Example: MODE=live SERIAL_PORT=/dev/tty.usbmodem123 BAUD=115200 node bridge/replay-server.js',
+      'No SERIAL_PORT set and auto-detect found nothing plausible.',
     );
+    console.error('Run: npm run ports');
+    console.error('Then: SERIAL_PORT=<path> MODE=live npm run dash:live');
     return;
   }
 
@@ -155,10 +163,10 @@ function stopLiveSerial() {
   console.log('Live serial streaming OFF');
 }
 
-function startMode(mode) {
+async function startMode(mode) {
   currentMode = mode;
 
-  if (mode === 'live') startLiveSerial();
+  if (mode === 'live') await startLiveSerial();
   else startReplay({ intervalMs: 1000 });
 }
 
