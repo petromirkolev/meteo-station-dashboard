@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "ports": "node bridge/list-ports.js",
     "dash:replay": "node bridge/replay-server.js",
     "dash:live": "MODE=live BAUD=115200 node bridge/replay-server.js",
     "dash:dev": "nodemon bridge/replay-server.js"
