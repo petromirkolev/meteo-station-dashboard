@@ -55,7 +55,9 @@ function renderData(vm) {
   const domData = (tid) => document.querySelector(`[data-testid="${tid}"]`);
 
   // Update DOM elements with data from the view model
-  domData('last-update').textContent = vm.time;
+  document.querySelector(
+    '[data-testid="last-update"] .chip__text',
+  ).textContent = vm.time;
   domData('temp-value').textContent = vm.tC;
   domData('badge-temp-state').textContent = vm.tempTrend;
   domData('humidity-value').textContent = vm.rh;

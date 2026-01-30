@@ -65,7 +65,7 @@ function heatIndexC(tC, rh) {
   }
 
   const hiC = ((hiF - 32) * 5) / 9;
-  return hiC.toFixed(1);
+  return hiC || '--';
 }
 
 /**
