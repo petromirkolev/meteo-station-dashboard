@@ -27,6 +27,7 @@ function bindEvents() {
       '[data-testid="connection-status"] > .status__label',
     ).textContent = 'CONNECTED';
   });
+
   //  Handle WebSocket close event
   ws.addEventListener('close', () => {
     document
@@ -36,11 +37,10 @@ function bindEvents() {
       '[data-testid="connection-status"] > .status__label',
     ).textContent = 'DISCONNECTED';
   });
+
   //  Handle incoming WebSocket messages
   ws.addEventListener('message', (ev) => {
     const msg = JSON.parse(ev.data);
-
-    if (msg.type !== 'frame' || !msg.frame) return;
 
     if (msg.type === 'frame') {
       const vm = controller(msg);
@@ -54,12 +54,12 @@ function bindEvents() {
         ? 'STOP'
         : 'RECORD';
     }
+
+    if (msg.type !== 'hello') return;
+    return;
   });
 
-  /**
-   * Toggles the recording state when the record button is clicked.
-   */
-
+  // Toggles the recording state when the record button is clicked
   recordButton?.addEventListener('click', () => {
     ws.send(JSON.stringify({ type: 'control', action: 'record' }));
   });
