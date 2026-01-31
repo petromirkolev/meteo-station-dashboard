@@ -42,7 +42,19 @@ function bindEvents() {
     renderData(vm);
   });
 
-  // Record live stream - TO DO
+  /**
+   * Toggles the recording state when the record button is clicked.
+   */
+  const btn = document.querySelector('[data-testid="record-data"]');
+
+  btn?.addEventListener('click', () => {
+    const wasOn = btn.getAttribute('aria-pressed') === 'true';
+    const isOn = !wasOn;
+
+    btn.setAttribute('aria-pressed', String(isOn));
+    btn.querySelector('.record__label').textContent = isOn ? 'STOP' : 'RECORD';
+    ws.send(JSON.stringify({ type: 'control', action: 'record', on: true }));
+  });
 }
 
 /**

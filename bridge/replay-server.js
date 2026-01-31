@@ -96,12 +96,6 @@ function startReplay({ intervalMs = 1000 } = {}) {
   console.log(`Replay streaming ON (interval: ${intervalMs}ms)`);
 }
 
-function stopReplay() {
-  if (replayTimer) clearInterval(replayTimer);
-  replayTimer = null;
-  console.log('Replay streaming OFF');
-}
-
 async function startLiveSerial() {
   let serialPort = null;
 
@@ -138,29 +132,12 @@ async function startLiveSerial() {
 
     try {
       const frame = JSON.parse(trimmed);
+
       broadcast({ type: 'frame', ts: Date.now(), source: 'live', frame });
     } catch {}
   });
 
   console.log('Live serial streaming ON');
-}
-
-function stopLiveSerial() {
-  if (parser) {
-    try {
-      parser.removeAllListeners('data');
-    } catch {}
-    parser = null;
-  }
-
-  if (serialPort) {
-    try {
-      serialPort.close();
-    } catch {}
-    serialPort = null;
-  }
-
-  console.log('Live serial streaming OFF');
 }
 
 async function startMode(mode) {
