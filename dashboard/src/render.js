@@ -41,6 +41,8 @@ function bindEvents() {
     const vm = controller(msg);
     renderData(vm);
   });
+
+  // Record live stream - TO DO
 }
 
 /**
@@ -61,6 +63,7 @@ function renderData(vm) {
   domData('temp-value').textContent = vm.tC;
   domData('badge-temp-state').textContent = vm.tempTrend;
   domData('humidity-value').textContent = vm.rh;
+  domData('badge-comfort').textContent = vm.humTrend;
   domData('heat-index-value').textContent = vm.heatIndex;
   domData('feels-like-value').textContent = vm.feelsLike;
   domData('dew-point-value').textContent = vm.dewPoint;
@@ -70,10 +73,7 @@ function renderData(vm) {
   domData('pressure-trend-value').textContent = domData(
     'badge-pressure-trend',
   ).textContent = vm.trend;
-  domData('eco2-value').textContent = vm.gasRaw;
-  domData('tvoc-value').textContent = vm.gasRaw;
-  domData('pm25-value').textContent = vm.gasRaw;
-  domData('badge-comfort').textContent = vm.humTrend;
+  domData('adc-value').textContent = vm.gasRaw;
 }
 
 export { bindEvents };

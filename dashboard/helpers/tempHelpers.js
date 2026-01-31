@@ -13,31 +13,58 @@ function addTemperatureSample(ts, tC, keepMs = 3 * 60 * 60 * 1000) {
   temperatureSamples.push({ ts, tC });
 
   const cutoff = ts - keepMs;
+
   while (temperatureSamples.length && temperatureSamples[0].ts < cutoff) {
     temperatureSamples.shift();
   }
 }
 
 /**
+ * Calculate temperature delta over a time window
+ * @param {number} windowMs
+ * @returns {number|null}
+ */
+function temperatureDelta(windowMs = 60 * 60 * 1000) {
+  if (temperatureSamples.length < 2) return null;
+
+  const latest = temperatureSamples[temperatureSamples.length - 1];
+  const oldest = temperatureSamples[0];
+
+  if (latest.ts - oldest.ts < windowMs) return null;
+
+  const targetTs = latest.ts - windowMs;
+
+  let ref = null;
+  for (let i = 0; i < temperatureSamples.length; i++) {
+    if (temperatureSamples[i].ts >= targetTs) {
+      ref = temperatureSamples[i];
+      break;
+    }
+  }
+
+  if (!ref) return null;
+
+  const d = latest.tC - ref.tC;
+  return Number.isFinite(d) ? d : null;
+}
+
+/**
  * Determines temperature "state" based on latest sample vs threshold
- * (Not a real trend yet; just a threshold classification.)
- * @param {number} thresholdTemp
+ * @param {number} threshold
  * @returns {'rising'|'falling'|'stable'|'unknown'}
  */
-function temperatureTrend(thresholdTemp = 22) {
-  const last = temperatureSamples[temperatureSamples.length - 1];
-  if (!last) return 'unknown';
-  if (typeof last.tC !== 'number' || !Number.isFinite(last.tC))
-    return 'unknown';
+function temperatureTrend(windowMs = 60 * 60 * 1000, thresholdTemp = 0) {
+  const d = temperatureDelta(windowMs);
 
-  if (last.tC > thresholdTemp) return 'rising';
-  if (last.tC < thresholdTemp) return 'falling';
+  if (typeof d !== 'number' || !Number.isFinite(d)) return 'unknown';
+
+  if (d > thresholdTemp) return 'warming';
+  if (d < thresholdTemp) return 'cooling';
   return 'stable';
 }
 
 /**
  * Calculates the heat index in Celsius
- * Returns NUMBER or null (controller formats)
  * @param {number} tC
  * @param {number} rh
  * @returns {number|null}
@@ -72,7 +99,6 @@ function heatIndexC(tC, rh) {
 
 /**
  * Calculates "feels like" temperature in Celsius
- * (For now: max(actual temp, heat index))
  * @param {number} tC
  * @param {number} rh
  * @returns {number|null}

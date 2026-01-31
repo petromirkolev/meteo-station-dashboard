@@ -21,11 +21,10 @@ function addPressureSample(ts, pHpa, keepMs = 3 * 60 * 60 * 1000) {
 
 /**
  * Calculate pressure delta over a time window
- * Returns a NUMBER (no toFixed here — controller formats)
  * @param {number} windowMs
  * @returns {number|null}
  */
-function pressureDeltaHpa(windowMs = 60 * 60 * 1000) {
+function pressureDelta(windowMs = 60 * 60 * 1000) {
   if (pressureSamples.length < 2) return null;
 
   const latest = pressureSamples[pressureSamples.length - 1];
@@ -56,7 +55,7 @@ function pressureDeltaHpa(windowMs = 60 * 60 * 1000) {
  * @returns {'rising'|'falling'|'stable'|'unknown'}
  */
 function pressureTrend(windowMs = 60 * 60 * 1000, thresholdHpa = 0.8) {
-  const d = pressureDeltaHpa(windowMs);
+  const d = pressureDelta(windowMs);
   if (typeof d !== 'number' || !Number.isFinite(d)) return 'unknown';
 
   if (d > thresholdHpa) return 'rising';
@@ -64,4 +63,4 @@ function pressureTrend(windowMs = 60 * 60 * 1000, thresholdHpa = 0.8) {
   return 'stable';
 }
 
-export { addPressureSample, pressureDeltaHpa, pressureTrend };
+export { addPressureSample, pressureDelta, pressureTrend };

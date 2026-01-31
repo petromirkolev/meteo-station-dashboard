@@ -170,19 +170,6 @@ async function startMode(mode) {
   else startReplay({ intervalMs: 1000 });
 }
 
-function stopMode(mode) {
-  if (mode === 'live') stopLiveSerial();
-  else stopReplay();
-}
-
-function switchMode(nextMode) {
-  if (nextMode === currentMode) return;
-
-  stopMode(currentMode);
-  startMode(nextMode);
-  broadcast({ type: 'mode', ts: Date.now(), source: currentMode });
-}
-
 // Boot
 server.listen(PORT, () => {
   console.log(`Dev server running: http://localhost:${PORT}`);

@@ -14,7 +14,7 @@ import {
 
 import {
   addPressureSample,
-  pressureDeltaHpa,
+  pressureDelta,
   pressureTrend,
 } from '../helpers/pressureHelpers.js';
 
@@ -25,7 +25,7 @@ import {
  * @returns {Object} Formatted data for dashboard display.
  */
 
-const PRESSURE_WINDOW_MS = 60 * 60 * 1000;
+const DELTA_WINDOW_MS = 60 * 1000; // 60 * 60 * 1000 - hour ; 60 * 1000 - minute
 
 function finiteNum(x) {
   return typeof x === 'number' && Number.isFinite(x) ? x : null;
@@ -64,10 +64,10 @@ export function controller(msg) {
   const dewPointNum =
     tCnum !== null && rhnum !== null ? dewPointC(tCnum, rhnum) : null;
   const comfort = rhnum !== null ? comfortLabel(rhnum) : 'Unknown';
-  const pDeltaNum = pressureDeltaHpa(PRESSURE_WINDOW_MS);
-  const pTrend = pressureTrend(PRESSURE_WINDOW_MS);
-  const tempTrendLabel = temperatureTrend();
-  const humTrendLabel = humidityTrend();
+  const pDeltaNum = pressureDelta(DELTA_WINDOW_MS);
+  const pTrend = pressureTrend(DELTA_WINDOW_MS);
+  const tempTrendLabel = temperatureTrend(DELTA_WINDOW_MS);
+  const humTrendLabel = humidityTrend(DELTA_WINDOW_MS);
 
   return {
     time: fmtTime(ts),

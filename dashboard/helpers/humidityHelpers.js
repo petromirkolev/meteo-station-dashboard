@@ -14,31 +14,58 @@ function addHumiditySample(ts, rh, keepMs = 3 * 60 * 60 * 1000) {
   humiditySamples.push({ ts, rh });
 
   const cutoff = ts - keepMs;
+
   while (humiditySamples.length && humiditySamples[0].ts < cutoff) {
     humiditySamples.shift();
   }
 }
 
 /**
- * Determine humidity "state" based on latest sample vs threshold
- * (Not a real trend yet; just a threshold classification.)
- * @param {number} thresholdHum Humidity threshold in %
- * @returns {'rising'|'falling'|'stable'|'unknown'}
+ * Calculate humidity delta over a time window
+ * @param {number} windowMs
+ * @returns {number|null}
  */
-function humidityTrend(thresholdHum = 50) {
-  const last = humiditySamples[humiditySamples.length - 1];
-  if (!last) return 'unknown';
-  if (typeof last.rh !== 'number' || !Number.isFinite(last.rh))
-    return 'unknown';
+function humidityDelta(windowMs = 60 * 60 * 1000) {
+  if (humiditySamples.length < 2) return null;
 
-  if (last.rh > thresholdHum) return 'rising';
-  if (last.rh < thresholdHum) return 'falling';
+  const latest = humiditySamples[humiditySamples.length - 1];
+  const oldest = humiditySamples[0];
+
+  if (latest.ts - oldest.ts < windowMs) return null;
+
+  const targetTs = latest.ts - windowMs;
+
+  let ref = null;
+  for (let i = 0; i < humiditySamples.length; i++) {
+    if (humiditySamples[i].ts >= targetTs) {
+      ref = humiditySamples[i];
+      break;
+    }
+  }
+
+  if (!ref) return null;
+
+  const d = latest.rh - ref.rh;
+  return Number.isFinite(d) ? d : null;
+}
+
+/**
+ * Determine humidity "state" based on latest sample vs threshold
+ * @param {number} thresholdHum Humidity threshold in %
+ * @returns {'damping'|'drying'|'stable'|'unknown'}
+ */
+function humidityTrend(windowMs = 60 * 60 * 1000, thresholdHum = 50) {
+  const d = humidityDelta(windowMs);
+
+  if (typeof d !== 'number' || !Number.isFinite(d)) return 'unknown';
+
+  if (d > thresholdHum) return 'damping';
+  if (d < thresholdHum) return 'drying';
   return 'stable';
 }
 
 /**
  * Calculate dew point in Celsius
- * Returns a NUMBER (no toFixed here — controller formats)
  * @param {number} tC Temperature in Celsius
  * @param {number} rh Relative Humidity in %
  * @returns {number|null}
@@ -64,9 +91,9 @@ function dewPointC(tC, rh) {
 function comfortLabel(rh) {
   const n = Number(rh);
   if (!Number.isFinite(n)) return 'OK';
-  if (n < 30) return 'Dry';
-  if (n <= 60) return 'OK';
-  return 'Humid';
+  if (n <= 40) return 'Dry';
+  if (n >= 60) return 'Humid';
+  return 'OK';
 }
 
 export { dewPointC, comfortLabel, addHumiditySample, humidityTrend };
