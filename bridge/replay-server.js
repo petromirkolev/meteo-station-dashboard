@@ -10,6 +10,9 @@ const MODE = (process.env.MODE || 'replay').toLowerCase(); // 'replay' | 'live'
 const ROOT = path.join(__dirname, '..');
 const WEB_ROOT = path.join(ROOT, 'dashboard');
 
+let recording = false;
+let recordingStream = null;
+
 // Static file server helpers
 function contentTypeFor(filePath) {
   const ext = path.extname(filePath).toLowerCase();
@@ -60,11 +63,23 @@ wss.on('connection', (ws) => {
   ws.send(
     JSON.stringify({ type: 'hello', ts: Date.now(), source: currentMode }),
   );
+
+  ws.on('message', (m) => {
+    const message = JSON.parse(m.toString());
+
+    if (!recording) {
+      recording = true;
+      console.log('Recording ON');
+      broadcast({ type: 'state', recording: true });
+    } else {
+      recording = false;
+      console.log('Recording OFF');
+      broadcast({ type: 'state', recording: false });
+    }
+  });
 });
 
 let currentMode = MODE;
-let replayTimer = null;
-let serialPort = null;
 let parser = null;
 
 function startReplay({ intervalMs = 1000 } = {}) {
@@ -139,6 +154,10 @@ async function startLiveSerial() {
 
   console.log('Live serial streaming ON');
 }
+
+function startRecording() {}
+
+function stopRecording() {}
 
 async function startMode(mode) {
   currentMode = mode;

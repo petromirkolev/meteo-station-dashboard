@@ -9,6 +9,8 @@ import { controller } from './controller.js';
  * @returns {void}
  */
 
+const recordButton = document.querySelector('[data-testid="record-data"]');
+
 function bindEvents() {
   const wsUrl =
     (location.protocol === 'https:' ? 'wss://' : 'ws://') +
@@ -37,23 +39,29 @@ function bindEvents() {
   //  Handle incoming WebSocket messages
   ws.addEventListener('message', (ev) => {
     const msg = JSON.parse(ev.data);
+
     if (msg.type !== 'frame' || !msg.frame) return;
-    const vm = controller(msg);
-    renderData(vm);
+
+    if (msg.type === 'frame') {
+      const vm = controller(msg);
+      renderData(vm);
+    }
+
+    if (msg.type === 'state') {
+      recordButton.getAttribute('aria-pressed') === msg.recording;
+      recordButton.setAttribute('aria-pressed', String(msg.recording));
+      recordButton.querySelector('.record__label').textContent = msg.recording
+        ? 'STOP'
+        : 'RECORD';
+    }
   });
 
   /**
    * Toggles the recording state when the record button is clicked.
    */
-  const btn = document.querySelector('[data-testid="record-data"]');
 
-  btn?.addEventListener('click', () => {
-    const wasOn = btn.getAttribute('aria-pressed') === 'true';
-    const isOn = !wasOn;
-
-    btn.setAttribute('aria-pressed', String(isOn));
-    btn.querySelector('.record__label').textContent = isOn ? 'STOP' : 'RECORD';
-    ws.send(JSON.stringify({ type: 'control', action: 'record', on: true }));
+  recordButton?.addEventListener('click', () => {
+    ws.send(JSON.stringify({ type: 'control', action: 'record' }));
   });
 }
 
