@@ -118,30 +118,40 @@ Optional: Arduino IDE (Live Mode only)
 
 - Run (Replay Mode) — recommended for UI + tests
 
+### From the repo root
+
 # 1) start the bridge in replay mode
 
 ```bash
-cd bridge
 npm install
-npm run dev:replay -- --file ../replay/sample.ndjson
+npm run dash:replay
 ```
 
 # 2) start the dashboard dev server
 
 ```bash
-cd ../dashboard
 npm install
-npm run dev
-Run (Live Mode)
+npm run dash:dev
 ```
 
 # 3) flash the sketch in /arduino (outputs NDJSON @ 115200)
 
-# 4) start live mode and point it at your serial port
+# 4) start live mode (port detection is automatic, if not, see below)
 
 ```bash
-cd bridge
-npm run dev:live -- --port /dev/cu.usbmodemXXXX --baud 115200
+npm run dash:live
+```
+
+# 5) see available ports for manual use
+
+```bash
+npm run ports
+```
+
+# 6) start live mode with explicit port (example)
+
+```bash
+SERIAL_PORT=/dev/cu.usbmodemXXXX npm run dash:live
 ```
 
 Tests (Replay Mode only)
@@ -150,7 +160,7 @@ Tests (Replay Mode only)
 cd tests
 npm install
 npx playwright install
-npm test
+npx playwright test || npx playwright test --ui
 ```
 
 Note: command names may change as the repo matures; the principle stays: Replay Mode is the default dev/test path.

@@ -198,8 +198,6 @@ function startReplay() {
 let serialPort = null;
 
 async function startLiveSerial() {
-  let serialPort = null;
-
   const { SerialPort } = require('serialport');
   const { ReadlineParser } = require('@serialport/parser-readline');
 
@@ -236,14 +234,6 @@ async function startLiveSerial() {
       emitFrame(frame, 'live');
     } catch {}
   });
-}
-
-function stopLiveSerial() {
-  if (!serialPort) return;
-  try {
-    serialPort.close();
-  } catch {}
-  serialPort = null;
 }
 
 function startMode() {
