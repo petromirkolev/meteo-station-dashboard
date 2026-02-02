@@ -6,7 +6,6 @@
 #define DHTTYPE DHT11
 
 const int MQ_AO = A0;
-const int BUZZ_PIN = 8;
 
 DHT dht(DHTPIN, DHTTYPE);
 Adafruit_BMP280 bmp;
@@ -23,9 +22,6 @@ void setup() {
 
   Wire.begin();
   dht.begin();
-
-  pinMode(BUZZ_PIN, OUTPUT);
-  digitalWrite(BUZZ_PIN, HIGH); // OFF for low-level trigger
 
   bmpOk = bmp.begin(0x76);
 
@@ -47,13 +43,6 @@ void loop() {
 
   int gasRaw = analogRead(MQ_AO);
 
-  const int GAS_BEEP_THRESHOLD = 120;
-  if (gasRaw > GAS_BEEP_THRESHOLD) {
-    digitalWrite(BUZZ_PIN, LOW);  // ON
-    delay(120);
-    digitalWrite(BUZZ_PIN, HIGH); // OFF
-  }
-
   Serial.print("{\"v\":1,");
   Serial.print("\"tC\":");
   printFloatOrNull(tC, 1);
@@ -67,5 +56,5 @@ void loop() {
   Serial.print(gasRaw);
   Serial.println("}");
 
-  delay(5000);
+  delay(1000);
 }
