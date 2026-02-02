@@ -10,7 +10,8 @@
     "dash:live": "MODE=live BAUD=115200 node bridge/replay-server.js",
     "dash:dev": "nodemon bridge/replay-server.js",
     "pw:smoke": "start-server-and-test \"cross-env REPLAY_PATH=replay/fixtures/one-frame-happy-smoke.ndjson npm run dash:replay\" http://localhost:5173 \"cross-env NO_WEBSERVER=1 npx playwright test tests/smoke.spec.ts\"",
-    "pw:replay": "start-server-and-test \"cross-env REPLAY_PATH=replay/fixtures/replay.ndjson REPLAY_INTERVAL_MS=1200 npm run dash:replay\" http://localhost:5173 \"cross-env NO_WEBSERVER=1 npx playwright test tests/replay.spec.ts\""
+    "pw:replay": "start-server-and-test \"cross-env REPLAY_PATH=replay/fixtures/replay.ndjson REPLAY_INTERVAL_MS=1200 npm run dash:replay\" http://localhost:5173 \"cross-env NO_WEBSERVER=1 npx playwright test tests/replay.spec.ts\"",
+    "pw:formatting": "start-server-and-test \"cross-env REPLAY_PATH=replay/fixtures/empty.ndjson npm run dash:replay\" http://localhost:5173 \"cross-env NO_WEBSERVER=1 npx playwright test --project=chromium tests/formatting.spec.ts\""
   },
   "repository": {
     "type": "git",

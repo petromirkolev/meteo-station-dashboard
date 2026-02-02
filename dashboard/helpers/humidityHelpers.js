@@ -95,7 +95,7 @@ function comfortLabel(rh) {
   if (!Number.isFinite(n)) return 'OK';
   if (n <= 40) return 'Dry';
   if (n >= 60) return 'Humid';
-  return 'OK';
+  return 'unknown';
 }
 
 export { dewPointC, comfortLabel, addHumiditySample, humidityTrend };

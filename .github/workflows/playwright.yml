@@ -21,6 +21,8 @@ jobs:
         run: npm run pw:smoke
       - name: Run Replay tests
         run: npm run pw:replay
+      - name: Run Formatting tests
+        run: npm run pw:formatting
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
