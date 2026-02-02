@@ -49,10 +49,7 @@ function broadcastState() {
 
 // Emit a new frame from source
 function emitFrame(frame, source) {
-  // Broadcast to dashboard
   broadcast({ type: 'frame', ts: Date.now(), source, frame });
-
-  // Record frames
   recorder.maybeWriteFrame(frame);
 }
 

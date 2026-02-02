@@ -5,7 +5,6 @@ const path = require('path');
 /**
  * Retrieves configuration settings from environment variables
  * and sets default values where necessary.
- *
  * @returns {Object} Configuration object containing:
  *  - PORT: Port number for the server
  *  - MODE: Operation mode ('replay' or 'live')
@@ -22,7 +21,8 @@ function getConfig() {
 
   const ROOT = path.join(__dirname, '..', '..'); // Project root directory
   const WEB_ROOT = path.join(ROOT, 'dashboard');
-  const REPLAY_PATH = path.join(ROOT, 'replay', 'sample.ndjson');
+  const REPLAY_PATH =
+    process.env.REPLAY_PATH || path.join(ROOT, 'replay', 'sample.ndjson');
   const RECORD_DIR = path.join(ROOT, 'replay', 'recordings');
 
   const BAUD = Number(process.env.BAUD || 115200);

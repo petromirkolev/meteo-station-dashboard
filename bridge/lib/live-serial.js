@@ -10,7 +10,6 @@ function asString(v) {
 
 /**
  * Start live serial data reading.
- *
  * @param {Object} options
  * @param {Function} options.resolveSerialPort - Function to auto-detect serial port.
  * @param {Function} options.emitFrame - Function to emit parsed data frames.
@@ -38,6 +37,7 @@ async function startLiveSerial({
     );
     console.error('Run: npm run ports');
     console.error('Then: SERIAL_PORT=<path> MODE=live npm run dash:live');
+    return;
   }
 
   console.log(`MODE=live serial ${portPath} @ ${Number(baudRate)}`);
@@ -58,9 +58,7 @@ async function startLiveSerial({
     try {
       const frame = JSON.parse(trimmed);
       emitFrame(frame, 'live');
-    } catch {
-      // ignore
-    }
+    } catch {}
   });
 }
 

@@ -7,7 +7,8 @@
     "ports": "node bridge/list-ports.js",
     "dash:replay": "node bridge/replay-server.js",
     "dash:live": "MODE=live BAUD=115200 node bridge/replay-server.js",
-    "dash:dev": "nodemon bridge/replay-server.js"
+    "dash:dev": "nodemon bridge/replay-server.js",
+    "pw:smoke": "start-server-and-test \"cross-env REPLAY_PATH=replay/fixtures/one-frame-happy-smoke.ndjson npm run dash:replay\" http://localhost:5173 \"npx playwright test tests/smoke.spec.ts\""
   },
   "repository": {
     "type": "git",
@@ -29,7 +30,9 @@
   "devDependencies": {
     "@playwright/test": "^1.58.1",
     "@types/node": "^25.1.0",
+    "cross-env": "^10.1.0",
     "nodemon": "^3.1.11",
+    "start-server-and-test": "^2.1.3",
     "typescript": "^5.9.3"
   }
 }
