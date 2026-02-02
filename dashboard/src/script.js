@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * @fileoverview Main script for the Meteo Station Dashboard application.
  * This script initializes the dashboard by binding necessary event handlers.

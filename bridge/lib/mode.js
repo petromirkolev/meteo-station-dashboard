@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Starts the appropriate mode based on the provided configuration.
  *

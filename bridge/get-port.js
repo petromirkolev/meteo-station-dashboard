@@ -1,3 +1,5 @@
+'use strict';
+
 const { SerialPort } = require('serialport');
 
 function scorePort(p) {
