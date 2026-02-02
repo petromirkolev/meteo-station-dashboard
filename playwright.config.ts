@@ -1,4 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
+const useWebServer = process.env.NO_WEBSERVER !== '1';
 
 export default defineConfig({
   testDir: './tests',
@@ -29,10 +30,11 @@ export default defineConfig({
     },
   ],
 
-  webServer: {
-    // command: 'npm run dash:replay', // Replay ndjson
-    command: 'npm run pw:smoke', // Smoke (1 frame) ndjson
-    url: 'http://localhost:5173',
-    reuseExistingServer: true,
-  },
+  webServer: useWebServer
+    ? {
+        command: 'npm run dash:replay',
+        url: 'http://localhost:5173',
+        reuseExistingServer: true,
+      }
+    : undefined,
 });
