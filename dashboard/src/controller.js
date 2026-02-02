@@ -27,7 +27,7 @@ import {
  * @returns {Object} Formatted data for dashboard display.
  */
 
-const DELTA_WINDOW_MS = 60 * 1000; // 60 * 60 * 1000 - hour ; 60 * 1000 - minute
+const DELTA_WINDOW_MS = 5000; // 60 * 60 * 1000 - hour ; 60 * 1000 - minute
 
 function finiteNum(x) {
   return typeof x === 'number' && Number.isFinite(x) ? x : null;

@@ -1,4 +1,4 @@
-import { Page, Locator, test, expect } from '@playwright/test';
+import { Page, Locator } from '@playwright/test';
 
 export class Dashboard {
   readonly page: Page;
@@ -65,9 +65,7 @@ export class Dashboard {
               if (msg?.type === 'frame' && msg?.frame) {
                 (window as any).__wsFrames.push(msg.frame);
               }
-            } catch {
-              console.warn(text);
-            }
+            } catch {}
           });
         }
       }

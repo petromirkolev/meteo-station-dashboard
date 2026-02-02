@@ -47,6 +47,7 @@ function temperatureDelta(windowMs = 60 * 60 * 1000) {
   if (!ref) return null;
 
   const d = latest.tC - ref.tC;
+
   return Number.isFinite(d) ? d : null;
 }
 

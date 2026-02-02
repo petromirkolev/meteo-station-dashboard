@@ -56,7 +56,7 @@ function humidityDelta(windowMs = 60 * 60 * 1000) {
  * @param {number} thresholdHum Humidity threshold in %
  * @returns {'damping'|'drying'|'stable'|'unknown'}
  */
-function humidityTrend(windowMs = 60 * 60 * 1000, thresholdHum = 50) {
+function humidityTrend(windowMs = 60 * 60 * 1000, thresholdHum = 0) {
   const d = humidityDelta(windowMs);
 
   if (typeof d !== 'number' || !Number.isFinite(d)) return 'unknown';
