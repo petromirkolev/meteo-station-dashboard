@@ -15,43 +15,8 @@ test.describe('Meteo Station Dashboard Smoke Tests', () => {
     page,
     dashboard,
   }) => {
-    await page.addInitScript(() => {
-      (window as any).__wsJson = [];
-
-      const Orig = window.WebSocket;
-      class WS extends Orig {
-        constructor(url: string | URL, protocols?: string | string[]) {
-          super(url as any, protocols as any);
-
-          this.addEventListener('message', (ev) => {
-            const text = String((ev as MessageEvent).data);
-            try {
-              (window as any).__wsJson.push(JSON.parse(text));
-            } catch {}
-          });
-        }
-      }
-
-      window.WebSocket = WS;
-    });
-
-    await dashboard.goto();
-    await expect
-      .poll(
-        async () => {
-          return page.evaluate(() => (window as any).__wsJson.length);
-        },
-        { timeout: 3000 },
-      )
-      .toBeGreaterThan(0);
-
-    const hasHello = await page.evaluate(() => {
-      return ((window as any).__wsJson as any[]).some(
-        (m) => m?.type === 'hello',
-      );
-    });
-
-    expect(hasHello).toBe(true);
+    await dashboard.gotoWithWsSpy();
+    await dashboard.waitForHello();
   });
 
   test('First frame updates at least one raw metric', async ({ dashboard }) => {

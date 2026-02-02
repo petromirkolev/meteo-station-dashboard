@@ -44,4 +44,37 @@ export class Dashboard {
   async goto(): Promise<void> {
     await this.page.goto('/');
   }
+
+  async gotoWithWsSpy() {
+    await this.page.addInitScript(() => {
+      (window as any).__wsJson = [];
+
+      const Orig = window.WebSocket;
+      class WS extends Orig {
+        constructor(url: any, protocols?: any) {
+          super(url, protocols);
+          this.addEventListener('message', (ev: any) => {
+            const text = String(ev.data);
+            try {
+              (window as any).__wsJson.push(JSON.parse(text));
+            } catch {}
+          });
+        }
+      }
+
+      (window as any).WebSocket = WS;
+    });
+
+    await this.goto();
+  }
+
+  async waitForHello(timeout = 3000) {
+    await this.page.waitForFunction(
+      () => {
+        const msgs = (window as any).__wsJson || [];
+        return msgs.some((m: any) => m?.type === 'hello');
+      },
+      { timeout },
+    );
+  }
 }
