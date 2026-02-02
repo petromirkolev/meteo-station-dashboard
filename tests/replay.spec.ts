@@ -1,25 +1,39 @@
 import { test, expect } from './src/test-options';
 
-// Given a known replay file, the first N frames produce expected UI values
-
-// Goal: prove replay determinism (your core design goal). You want “given input stream X, UI states Y happen in order.”
-// How to keep deterministic: use a small fixture file with 2–5 lines and set replay interval fast/known (or run REPLAY_ONCE/REPLAY_MAX_FRAMES if you add that knob).
-// Assertion idea: after each frame, assert a specific UI state (raw temp, humidity, pressure) matches expected formatting. If you can’t “step” frames, then assert “eventually shows value A, then eventually shows value B” in order.
-
-// Replay loops correctly
-
-// Goal: prove that reaching end-of-file doesn’t stop streaming; it wraps and continues.
-// Assertion idea: fixture with 2 frames: A then B. Wait to observe A, then B, then A again. This also proves your circular index logic.
-
-// Formatting rules are stable
-
-// Goal: lock down your UI contract so refactors don’t silently change presentation (decimals, units, placeholders).
-// Assertion idea: assert exact string format for a few representative values:
-// temp has 1 decimal
-// pressure integer (or 1 decimal, whatever you chose)
-// placeholders are consistent (--.-, ----, etc.)
-// This is a high-signal portfolio test because it shows you treat UI as a spec.
-
 test.describe('Replay test suite', () => {
-  test('Replay frames produce expected UI values', async ({ dashboard }) => {});
+  test('Replay frames produce expected UI values', async ({ dashboard }) => {
+    await dashboard.gotoWithWsSpy();
+
+    const count = 6;
+
+    await dashboard.waitForFrames(count, 20000);
+    const frames = await dashboard.getFrames();
+
+    expect(frames.length).toBeGreaterThanOrEqual(count);
+
+    for (let i = 0; i < count; i++) {
+      const frame = frames[i];
+
+      expect(frame, `missing frame at index ${i}`).toBeTruthy();
+
+      const expectedTemp = Number(frame.tC).toFixed(1);
+      const expectedHum = Number(frame.rh).toFixed(1);
+      const expectedPress = Number(frame.pHpa).toFixed(1);
+      const expectedGas = String(frame.gasRaw);
+
+      await expect(dashboard.tempValue).toHaveText(expectedTemp);
+      await expect(dashboard.humidityValue).toHaveText(expectedHum);
+      await expect(dashboard.pressureValue).toHaveText(expectedPress);
+      await expect(dashboard.gasValue).toHaveText(expectedGas);
+    }
+
+    // Also check that frames replay
+    const f0 = await dashboard.getFrame(0);
+    const f5 = await dashboard.getFrame(5);
+
+    expect(f5.tC).toBe(f0.tC);
+    expect(f5.rh).toBe(f0.rh);
+    expect(f5.pHpa).toBe(f0.pHpa);
+    expect(f5.gasRaw).toBe(f0.gasRaw);
+  });
 });

@@ -86,7 +86,7 @@ startMode({
       replayPath: cfg.REPLAY_PATH,
       root: cfg.ROOT,
       emitFrame,
-      intervalMs: 1000,
+      intervalMs: Number(process.env.REPLAY_INTERVAL_MS || 1000),
     }),
   startLive: () =>
     startLiveSerial({

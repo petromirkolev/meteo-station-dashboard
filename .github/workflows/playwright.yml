@@ -19,8 +19,8 @@ jobs:
         run: npx playwright install --with-deps
       - name: Run Smoke tests
         run: npm run pw:smoke
-      # - name: Run Replay tests
-      #   run: npm run pw:replay
+      - name: Run Replay tests
+        run: npm run pw:replay
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:

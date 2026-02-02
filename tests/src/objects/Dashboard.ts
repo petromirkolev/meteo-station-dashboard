@@ -47,17 +47,27 @@ export class Dashboard {
 
   async gotoWithWsSpy() {
     await this.page.addInitScript(() => {
-      (window as any).__wsJson = [];
+      (window as any).__wsMsgs = [];
+      (window as any).__wsFrames = [];
 
       const Orig = window.WebSocket;
       class WS extends Orig {
         constructor(url: any, protocols?: any) {
           super(url, protocols);
+
           this.addEventListener('message', (ev: any) => {
             const text = String(ev.data);
             try {
-              (window as any).__wsJson.push(JSON.parse(text));
-            } catch {}
+              const msg = JSON.parse(text);
+
+              (window as any).__wsMsgs.push(msg);
+
+              if (msg?.type === 'frame' && msg?.frame) {
+                (window as any).__wsFrames.push(msg.frame);
+              }
+            } catch {
+              console.warn(text);
+            }
           });
         }
       }
@@ -71,10 +81,32 @@ export class Dashboard {
   async waitForHello(timeout = 3000) {
     await this.page.waitForFunction(
       () => {
-        const msgs = (window as any).__wsJson || [];
+        const msgs = (window as any).__wsMsgs || [];
         return msgs.some((m: any) => m?.type === 'hello');
       },
       { timeout },
     );
+  }
+
+  async waitForFrames(count: number, timeout = 10000) {
+    await this.page.waitForFunction(
+      (n) => {
+        const frames = (window as any).__wsFrames || [];
+        return frames.length >= n;
+      },
+      count,
+      { timeout },
+    );
+  }
+  async getFrame(i: number) {
+    return this.page.evaluate((idx) => (window as any).__wsFrames?.[idx], i);
+  }
+
+  async getFrames() {
+    return this.page.evaluate(() => (window as any).__wsFrames || []);
+  }
+
+  async waitForFrameIndex(i: number, timeout = 10000) {
+    await this.waitForFrames(i + 1, timeout);
   }
 }
