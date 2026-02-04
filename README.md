@@ -1,6 +1,6 @@
 # Meteo Station Dashboard
 
-Real-time **Meteo + Comfort + Air/Noise** dashboard with a deterministic **Replay Mode** (CI-safe, no hardware required).
+Real-time **Meteo + Comfort + Air/Noise** dashboard with **Replay Mode** (CI-safe, no hardware required).
 
 ## Core idea
 
@@ -15,24 +15,23 @@ Real-time **Meteo + Comfort + Air/Noise** dashboard with a deterministic **Repla
 - Humidity (%)
 - Pressure (hPa)
 - Gas/Air index (raw ADC → normalized later)
-- (Planned) Light (lux)
+- (Planned) Light
 - (Planned) Noise index + spike events
 
 ### Derived metrics (dashboard)
 
-- Dew point
-- Heat index / “feels like”
+- Humidity trend and dew point
+- Heat index and “feels like”
 - Comfort label (dry/ok/humid)
-- Pressure trend (rising/falling/stable)
-- Alerts + event log
+- Pressure trend (rising/falling/stable) and delta
 
 ## Tech stack
 
 ### Hardware
 
 - Arduino UNO R4 Minima
-- Sensors (current): **BMP280 + DHT11 + MQ**
-- Sensors (planned): light + sound + optional PM/CO₂
+- Sensors (current): **BMP280 + DHT11 + MQ2**
+- Sensors (planned): light + sound
 
 ### Firmware (Arduino)
 
@@ -44,7 +43,6 @@ Real-time **Meteo + Comfort + Air/Noise** dashboard with a deterministic **Repla
 - Node.js + TypeScript
 - Reads Serial via "serialport" (Live Mode)
 - Streams datasets from file (Replay Mode)
-- Validates frames (e.g. "zod")
 - Broadcasts via WebSocket ("ws")
 
 ### Dashboard (Web)
@@ -106,7 +104,7 @@ Dashboard responsibilities:
 
 - trigger alerts + append event log
 
-## Getting started (dev)
+## Getting started
 
 Prereqs
 
