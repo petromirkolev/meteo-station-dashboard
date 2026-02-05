@@ -21,7 +21,20 @@ test.describe('Derived metrics test suite', () => {
       expect(heat).toBeGreaterThan(temp);
     });
   });
-  test.describe('Dew point', () => {});
+  test.describe('Dew point', () => {
+    test('Dew point is calculated properly', async ({ dashboard }) => {
+      const a = 17.62;
+      const b = 243.12;
+      const tempValue = Number(dashboard.tempValue.textContent());
+      const humidityValue = Number(dashboard.humidityValue.textContent());
+
+      const gamma =
+        (a * tempValue) / (b + tempValue) + Math.log(humidityValue / 100);
+      const dp = (b * gamma) / (a - gamma);
+
+      console.log(dp);
+    });
+  });
   test.describe('Comfort index', () => {});
   test.describe('Trends ', () => {});
 });
