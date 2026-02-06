@@ -32,7 +32,7 @@ test.describe('Derived metrics test suite', () => {
         (a * tempValue) / (b + tempValue) + Math.log(humidityValue / 100);
       const dp = (b * gamma) / (a - gamma);
 
-      console.log(dp);
+      // console.log(dp);
     });
   });
   test.describe('Comfort index', () => {});
