@@ -33,6 +33,8 @@ test.describe('Derived metrics test suite', () => {
       const dp = (b * gamma) / (a - gamma);
 
       // console.log(dp);
+      // console.log(dp);
+      // console.log(dp);
     });
   });
   test.describe('Comfort index', () => {});
