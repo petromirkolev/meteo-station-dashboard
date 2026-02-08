@@ -1,7 +1,7 @@
 import { test, expect } from './src/test-options';
 
 test.describe('Derived metrics test suite', () => {
-  test.describe('Heat index', () => {
+  test.describe('Heat index @hi', () => {
     test('Heat index is calculated properly', async ({ dashboard }) => {
       await dashboard.gotoWithWsSpy();
       await dashboard.waitForHello();
@@ -21,7 +21,7 @@ test.describe('Derived metrics test suite', () => {
       expect(heat).toBeGreaterThan(temp);
     });
   });
-  test.describe('Dew point', () => {
+  test.describe('Dew point @dew', () => {
     test('Dew point is calculated properly', async ({ dashboard }) => {
       const a = 17.62;
       const b = 243.12;
@@ -32,7 +32,7 @@ test.describe('Derived metrics test suite', () => {
         (a * tempValue) / (b + tempValue) + Math.log(humidityValue / 100);
       const dp = (b * gamma) / (a - gamma);
 
-      // console.log(dp);
+      console.log(dp);
       // console.log(dp);
       // console.log(dp);
     });
