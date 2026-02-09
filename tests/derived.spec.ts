@@ -37,6 +37,12 @@ test.describe('Derived metrics test suite', () => {
       // console.log(dp);
     });
   });
-  test.describe('Comfort index', () => {});
-  test.describe('Trends ', () => {});
+  test.describe('Comfort index @comfort', () => {
+    test('Comfort label is calculated properly', async ({ dashboard }) => {});
+  });
+  test.describe('Trends @trends', () => {
+    test('Trends correspond to temp/hum/pressure values', async ({
+      dashboard,
+    }) => {});
+  });
 });
