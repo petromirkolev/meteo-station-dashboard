@@ -6,14 +6,10 @@ test.describe('Derived metrics test suite', () => {
       await dashboard.gotoWithWsSpy();
       await dashboard.waitForHello();
 
-      console.log(await dashboard.tempValue.textContent());
-      console.log(await dashboard.heatIndex.textContent());
+      await expect(dashboard.tempValue).not.toHaveText('--.-');
 
       const temp = Number((await dashboard.tempValue.textContent())?.trim());
       const heat = Number((await dashboard.heatIndex.textContent())?.trim());
-
-      console.log(temp);
-      console.log(heat);
 
       expect(Number.isFinite(temp)).toBe(true);
       expect(Number.isFinite(heat)).toBe(true);
