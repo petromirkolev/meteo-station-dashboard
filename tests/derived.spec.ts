@@ -20,18 +20,17 @@ test.describe('Derived metrics test suite', () => {
       const b = 243.12;
 
       await dashboard.gotoWithWsSpy();
-      // await dashboard.waitForFrames(1, 10000);
+      await dashboard.waitForFrames(1, 10000);
 
-      const tempValue = Number(dashboard.tempValue.textContent());
-      const humidityValue = Number(dashboard.humidityValue.textContent());
+      const temp = Number((await dashboard.tempValue.textContent())?.trim());
+      const humidity = Number(
+        (await dashboard.humidityValue.textContent())?.trim(),
+      );
 
-      const gamma =
-        (a * tempValue) / (b + tempValue) + Math.log(humidityValue / 100);
+      const gamma = (a * temp) / (b + temp) + Math.log(humidity / 100);
       const dp = (b * gamma) / (a - gamma);
 
-      console.log(dp);
-      // console.log(dp);
-      // console.log(dp);
+      expect(dp.toFixed(1)).toEqual(await dashboard.dewPoint.textContent());
     });
   });
   test.describe('Comfort index @comfort', () => {
