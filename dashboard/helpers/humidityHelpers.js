@@ -92,10 +92,10 @@ function dewPointC(tC, rh) {
  */
 function comfortLabel(rh) {
   const n = Number(rh);
-  if (!Number.isFinite(n)) return 'OK';
-  if (n <= 40) return 'Dry';
-  if (n >= 60) return 'Humid';
-  return 'unknown';
+
+  if (n < 30) return 'Dry';
+  if (n > 60) return 'Humid';
+  return 'OK';
 }
 
 export { dewPointC, comfortLabel, addHumiditySample, humidityTrend };

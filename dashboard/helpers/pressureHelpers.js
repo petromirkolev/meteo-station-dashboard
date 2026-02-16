@@ -60,8 +60,6 @@ function pressureTrend(windowMs = 60 * 60 * 1000, thresholdHpa = 0) {
   const d = pressureDelta(windowMs);
   if (typeof d !== 'number' || !Number.isFinite(d)) return 'unknown';
 
-  console.log(d);
-
   if (d > thresholdHpa) return 'rising';
   if (d < -thresholdHpa) return 'falling';
   return 'stable';
