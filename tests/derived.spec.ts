@@ -34,7 +34,33 @@ test.describe('Derived metrics test suite', () => {
     });
   });
   test.describe('Comfort index @comfort', () => {
-    test('Comfort label is calculated properly', async ({ dashboard }) => {});
+    test('Comfort label mapping is correct @comfort', async ({ dashboard }) => {
+      await dashboard.gotoWithWsSpy();
+      await dashboard.waitForHello();
+
+      const cases = [
+        { i: 0, label: 'Dry' },
+        { i: 3, label: 'OK' },
+        { i: 6, label: 'Humid' },
+      ];
+
+      const boundaryCases = [
+        { i: 1, label: 'Dry' },
+        { i: 2, label: 'OK' },
+        { i: 4, label: 'OK' },
+        { i: 5, label: 'Humid' },
+      ];
+
+      for (const c of cases) {
+        await dashboard.waitForFrameIndex(c.i, 10000);
+        await expect(dashboard.comfortLabel).toHaveText(c.label);
+      }
+
+      for (const c of boundaryCases) {
+        await dashboard.waitForFrameIndex(c.i, 10000);
+        await expect(dashboard.comfortLabel).toHaveText(c.label);
+      }
+    });
   });
   test.describe('Trends @trends', () => {
     test('Trends correspond to temp/hum/pressure values', async ({
