@@ -63,8 +63,8 @@ test.describe('Derived metrics test suite', () => {
     });
   });
   test.describe('Trends @trends', () => {
-    test('Trends correspond to temp/hum/pressure values', async ({
-      dashboard,
-    }) => {});
+    test('Trends correspond to temp value', async ({ dashboard }) => {});
+    test('Trends correspond to humidity value', async ({ dashboard }) => {});
+    test('Trends correspond to pressure value', async ({ dashboard }) => {});
   });
 });
