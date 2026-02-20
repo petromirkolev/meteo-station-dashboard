@@ -63,7 +63,26 @@ test.describe('Derived metrics test suite', () => {
     });
   });
   test.describe('Trends @trends', () => {
-    test('Trends correspond to temp value', async ({ dashboard }) => {});
+    test('Trends correspond to temp value', async ({ dashboard }) => {
+      await dashboard.gotoWithWsSpy();
+      await dashboard.waitForHello();
+
+      await dashboard.waitForFrameIndex(4, 20000);
+      await dashboard.waitForFrameIndex(9, 20000);
+
+      await expect
+        .poll(async () => (await dashboard.tempTrend.textContent())?.trim(), {
+          timeout: 3000,
+        })
+        .toMatch(/warming/i);
+
+      await dashboard.waitForFrameIndex(14, 20000);
+      await expect
+        .poll(async () => (await dashboard.tempTrend.textContent())?.trim(), {
+          timeout: 3000,
+        })
+        .toMatch(/cooling/i);
+    });
     test('Trends correspond to humidity value', async ({ dashboard }) => {});
     test('Trends correspond to pressure value', async ({ dashboard }) => {});
   });
