@@ -67,21 +67,30 @@ test.describe('Derived metrics test suite', () => {
       await dashboard.gotoWithWsSpy();
       await dashboard.waitForHello();
 
-      await dashboard.waitForFrameIndex(4, 20000);
-      await dashboard.waitForFrameIndex(9, 20000);
+      // Warmup stable (27.0 repeated)
+      await dashboard.waitForFrameIndex(4, 30000);
+      await expect(dashboard.tempValue).toHaveText('27.0');
+      await expect(dashboard.tempTrend).toHaveText('stable');
 
-      await expect
-        .poll(async () => (await dashboard.tempTrend.textContent())?.trim(), {
-          timeout: 3000,
-        })
-        .toMatch(/warming/i);
+      // Transition up at index 5 (27.0 -> 29.0)
+      await dashboard.waitForFrameIndex(5, 30000);
+      await expect(dashboard.tempValue).toHaveText('29.0');
+      await expect(dashboard.tempTrend).toHaveText('warming');
 
-      await dashboard.waitForFrameIndex(14, 20000);
-      await expect
-        .poll(async () => (await dashboard.tempTrend.textContent())?.trim(), {
-          timeout: 3000,
-        })
-        .toMatch(/cooling/i);
+      // Next frame stays 29.0 => stable again
+      await dashboard.waitForFrameIndex(6, 30000);
+      await expect(dashboard.tempValue).toHaveText('29.0');
+      await expect(dashboard.tempTrend).toHaveText('stable');
+
+      // Transition down at index 10 (29.0 -> 27.0)
+      await dashboard.waitForFrameIndex(10, 30000);
+      await expect(dashboard.tempValue).toHaveText('27.0');
+      await expect(dashboard.tempTrend).toHaveText('cooling');
+
+      // Next frame stays 27.0 => stable
+      await dashboard.waitForFrameIndex(11, 30000);
+      await expect(dashboard.tempValue).toHaveText('27.0');
+      await expect(dashboard.tempTrend).toHaveText('stable');
     });
     test('Trends correspond to humidity value', async ({ dashboard }) => {});
     test('Trends correspond to pressure value', async ({ dashboard }) => {});
