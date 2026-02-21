@@ -10,6 +10,10 @@ const { startReplay } = require('./lib/replay');
 const { startLiveSerial } = require('./lib/live-serial');
 const { startMode } = require('./lib/mode');
 
+// Replay control (start only after first WS client connects)
+let replayCtrl = null;
+let replayStarted = false;
+
 const cfg = getConfig();
 
 // HTTP static server
@@ -62,6 +66,17 @@ wss.on('connection', (ws) => {
     JSON.stringify({ type: 'state', mode: cfg.MODE, recording, recordFile }),
   );
 
+  // Start replay only after the first client connects (for Playwright compatibility)
+  if (cfg.MODE === 'replay' && !replayStarted) {
+    replayStarted = true;
+    replayCtrl = startReplay({
+      replayPath: cfg.REPLAY_PATH,
+      root: cfg.ROOT,
+      emitFrame,
+      intervalMs: Number(process.env.REPLAY_INTERVAL_MS || 1000),
+    });
+  }
+
   ws.on('message', (data) => {
     const text = Buffer.isBuffer(data) ? data.toString() : String(data);
 
@@ -81,13 +96,9 @@ wss.on('connection', (ws) => {
 // Start mode
 startMode({
   mode: cfg.MODE,
-  startReplay: () =>
-    startReplay({
-      replayPath: cfg.REPLAY_PATH,
-      root: cfg.ROOT,
-      emitFrame,
-      intervalMs: Number(process.env.REPLAY_INTERVAL_MS || 1000),
-    }),
+  // Replay starts on first WS connection (see wss.on('connection'))
+  startReplay: () => null,
+  // Live can start immediately
   startLive: () =>
     startLiveSerial({
       resolveSerialPort,
