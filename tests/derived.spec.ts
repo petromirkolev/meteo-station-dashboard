@@ -87,7 +87,39 @@ test.describe('Derived metrics test suite', () => {
       await expect(dashboard.tempValue).toHaveText('27.0');
       await expect(dashboard.tempTrend).toHaveText('stable');
     });
-    test('Trends correspond to humidity value', async ({ dashboard }) => {});
+    test('Trends correspond to humidity value', async ({ dashboard }) => {
+      test.setTimeout(120_000);
+      await dashboard.gotoWithWsSpy();
+      await dashboard.waitForHello();
+
+      await dashboard.waitForFrameIndex(4, 30000);
+      await expect(dashboard.humidityValue).toHaveText('45.0');
+      await expect(dashboard.humidityTrend).toHaveText('stable');
+
+      await dashboard.waitForFrameIndex(15, 30000);
+      await expect(dashboard.humidityValue).toHaveText('25.0');
+      await expect(dashboard.humidityTrend).toHaveText('drying');
+
+      await dashboard.waitForFrameIndex(16, 30000);
+      await expect(dashboard.humidityValue).toHaveText('25.0');
+      await expect(dashboard.humidityTrend).toHaveText('stable');
+
+      await dashboard.waitForFrameIndex(20, 30000);
+      await expect(dashboard.humidityValue).toHaveText('75.0');
+      await expect(dashboard.humidityTrend).toHaveText('damping');
+
+      await dashboard.waitForFrameIndex(21, 30000);
+      await expect(dashboard.humidityValue).toHaveText('75.0');
+      await expect(dashboard.humidityTrend).toHaveText('stable');
+
+      await dashboard.waitForFrameIndex(25, 30000);
+      await expect(dashboard.humidityValue).toHaveText('45.0');
+      await expect(dashboard.humidityTrend).toHaveText('drying');
+
+      await dashboard.waitForFrameIndex(26, 30000);
+      await expect(dashboard.humidityValue).toHaveText('45.0');
+      await expect(dashboard.humidityTrend).toHaveText('stable');
+    });
     test('Trends correspond to pressure value', async ({ dashboard }) => {});
   });
 });
