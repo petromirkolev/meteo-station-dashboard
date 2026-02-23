@@ -62,6 +62,7 @@ test.describe('Derived metrics test suite', () => {
       }
     });
   });
+
   test.describe('Trends @trends', () => {
     test('Trends correspond to temp value', async ({ dashboard }) => {
       await dashboard.gotoWithWsSpy();
@@ -87,6 +88,7 @@ test.describe('Derived metrics test suite', () => {
       await expect(dashboard.tempValue).toHaveText('27.0');
       await expect(dashboard.tempTrend).toHaveText('stable');
     });
+
     test('Trends correspond to humidity value', async ({ dashboard }) => {
       test.setTimeout(120_000);
       await dashboard.gotoWithWsSpy();
@@ -120,6 +122,31 @@ test.describe('Derived metrics test suite', () => {
       await expect(dashboard.humidityValue).toHaveText('45.0');
       await expect(dashboard.humidityTrend).toHaveText('stable');
     });
-    test('Trends correspond to pressure value', async ({ dashboard }) => {});
+
+    test('Trends correspond to pressure value', async ({ dashboard }) => {
+      test.setTimeout(120_000);
+      await dashboard.gotoWithWsSpy();
+      await dashboard.waitForHello();
+
+      await dashboard.waitForFrameIndex(29, 30000);
+      await expect(dashboard.pressureValue).toHaveText('1012.0');
+      await expect(dashboard.badgePressureTrend).toHaveText('stable');
+
+      await dashboard.waitForFrameIndex(30, 30000);
+      await expect(dashboard.pressureValue).toHaveText('1016.0');
+      await expect(dashboard.badgePressureTrend).toHaveText('rising');
+
+      await dashboard.waitForFrameIndex(31, 30000);
+      await expect(dashboard.pressureValue).toHaveText('1016.0');
+      await expect(dashboard.badgePressureTrend).toHaveText('stable');
+
+      await dashboard.waitForFrameIndex(35, 30000);
+      await expect(dashboard.pressureValue).toHaveText('1012.0');
+      await expect(dashboard.badgePressureTrend).toHaveText('falling');
+
+      await dashboard.waitForFrameIndex(36, 30000);
+      await expect(dashboard.pressureValue).toHaveText('1012.0');
+      await expect(dashboard.badgePressureTrend).toHaveText('stable');
+    });
   });
 });
