@@ -20,8 +20,8 @@ test.describe('Meteo Station Dashboard Smoke Tests', () => {
   });
 
   test('First frame updates at least one raw metric', async ({ dashboard }) => {
-    await dashboard.goto();
-
+    await dashboard.gotoWithWsSpy();
+    await dashboard.waitForHello();
     await expect(dashboard.tempValue).toHaveText('27.1');
   });
 });
