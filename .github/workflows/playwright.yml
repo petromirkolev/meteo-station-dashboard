@@ -23,6 +23,14 @@ jobs:
         run: npm run pw:replay
       - name: Run Formatting tests
         run: npm run pw:formatting
+      - name: Run Derived (Heat index) tests
+        run: npm run pw:derived:hi
+      - name: Run Derived (Dew point) tests
+        run: npm run pw:derived:dew
+      - name: Run Derived (Comfort index) tests
+        run: npm run pw:derived:comfort
+      - name: Run Trends tests
+        run: npm run pw:derived:trends
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
