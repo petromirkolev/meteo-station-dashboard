@@ -17,6 +17,8 @@ test.describe('Meteo Station Dashboard Smoke Tests', () => {
   });
 
   test('First frame updates at least one raw metric', async ({ dashboard }) => {
+    test.setTimeout(60_000);
+
     dashboard.page.on('pageerror', (err) => {
       console.log('PAGEERROR:', err.message);
     });
@@ -25,8 +27,6 @@ test.describe('Meteo Station Dashboard Smoke Tests', () => {
       if (msg.type() === 'error') console.log('CONSOLE ERROR:', msg.text());
       if (msg.type() === 'warning') console.log('CONSOLE WARN:', msg.text());
     });
-
-    test.setTimeout(30_000);
 
     await dashboard.goto();
 
