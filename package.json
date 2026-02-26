@@ -17,7 +17,8 @@
     "pw:derived:comfort": "start-server-and-test \"cross-env REPLAY_PATH=replay/fixtures/derived-comfort.ndjson npm run dash:replay\" http://localhost:5173 \"cross-env NO_WEBSERVER=1 npx playwright test --project=chromium --grep @comfort tests/derived.spec.ts\"",
     "pw:derived:trends": "start-server-and-test \"cross-env REPLAY_PATH=replay/fixtures/derived-trends.ndjson REPLAY_INTERVAL_MS=1500 npm run dash:replay\" http://localhost:5173 \"cross-env NO_WEBSERVER=1 npx playwright test --project=chromium --grep @trends tests/derived.spec.ts\"",
     "pw:state": "start-server-and-test \"cross-env REPLAY_PATH=replay/fixtures/replay.ndjson npm run dash:replay\" http://localhost:5173 \"cross-env NO_WEBSERVER=1 npx playwright test tests/state-control.spec.ts\"",
-    "pw:resilience": "start-server-and-test \"cross-env REPLAY_PATH=replay/fixtures/resilience.ndjson npm run dash:replay\" http://localhost:5173 \"cross-env NO_WEBSERVER=1 npx playwright test tests/resilience.spec.ts\""
+    "pw:resilience": "start-server-and-test \"cross-env REPLAY_PATH=replay/fixtures/resilience.ndjson npm run dash:replay\" http://localhost:5173 \"cross-env NO_WEBSERVER=1 npx playwright test tests/resilience.spec.ts\"",
+    "pw:load": "start-server-and-test \"cross-env REPLAY_PATH=replay/fixtures/replay.ndjson REPLAY_INTERVAL_MS=50 npm run dash:replay\" http://localhost:5173 \"cross-env NO_WEBSERVER=1 npx playwright test tests/load.spec.ts\""
   },
   "repository": {
     "type": "git",
