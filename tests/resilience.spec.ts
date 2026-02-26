@@ -36,4 +36,14 @@ test.describe('Resilience / defensive behavior suite', () => {
       })
       .toBe('----');
   });
+
+  test('Malformed JSON line is ignored and replay continues', async ({
+    dashboard,
+  }) => {
+    test.setTimeout(60_000);
+
+    await dashboard.goto();
+
+    await expect(dashboard.tempValue).toHaveText('27.4', { timeout: 30_000 });
+  });
 });
