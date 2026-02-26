@@ -46,4 +46,23 @@ test.describe('Resilience / defensive behavior suite', () => {
 
     await expect(dashboard.tempValue).toHaveText('27.4', { timeout: 30_000 });
   });
+
+  test('WebSocket disconnect doesn’t brick the page (recovers)', async ({
+    dashboard,
+    page,
+  }) => {
+    test.setTimeout(90_000);
+
+    await dashboard.goto();
+    await expect(dashboard.tempValue).not.toHaveText('--.-', {
+      timeout: 20_000,
+    });
+
+    await page.reload();
+
+    await expect(dashboard.tempValue).not.toHaveText('--.-', {
+      timeout: 20_000,
+    });
+    await expect(dashboard.tempValue).toHaveText('27.4', { timeout: 30_000 });
+  });
 });
