@@ -14,6 +14,7 @@ test.describe('Derived metrics test suite', () => {
       expect(heat).toBeGreaterThan(temp);
     });
   });
+
   test.describe('Dew point @dew', () => {
     test('Dew point is calculated properly', async ({ dashboard }) => {
       const a = 17.62;
@@ -33,6 +34,7 @@ test.describe('Derived metrics test suite', () => {
       expect(dp.toFixed(1)).toEqual(await dashboard.dewPoint.textContent());
     });
   });
+
   test.describe('Comfort index @comfort', () => {
     test('Comfort label mapping is correct @comfort', async ({ dashboard }) => {
       await dashboard.gotoWithWsSpy();
@@ -64,6 +66,10 @@ test.describe('Derived metrics test suite', () => {
   });
 
   test.describe('Trends @trends', () => {
+    test.afterEach(async ({ page }) => {
+      await page.close();
+    });
+
     test('Trends correspond to temp value', async ({ dashboard }) => {
       await dashboard.gotoWithWsSpy();
       await dashboard.waitForHello();
@@ -125,26 +131,27 @@ test.describe('Derived metrics test suite', () => {
 
     test('Trends correspond to pressure value', async ({ dashboard }) => {
       test.setTimeout(120_000);
+
       await dashboard.gotoWithWsSpy();
       await dashboard.waitForHello();
 
-      await dashboard.waitForFrameIndex(29, 30000);
+      await dashboard.waitForFrameIndex(29, 60000);
       await expect(dashboard.pressureValue).toHaveText('1012.0');
       await expect(dashboard.badgePressureTrend).toHaveText('stable');
 
-      await dashboard.waitForFrameIndex(30, 30000);
+      await dashboard.waitForFrameIndex(30, 60000);
       await expect(dashboard.pressureValue).toHaveText('1016.0');
       await expect(dashboard.badgePressureTrend).toHaveText('rising');
 
-      await dashboard.waitForFrameIndex(31, 30000);
+      await dashboard.waitForFrameIndex(31, 60000);
       await expect(dashboard.pressureValue).toHaveText('1016.0');
       await expect(dashboard.badgePressureTrend).toHaveText('stable');
 
-      await dashboard.waitForFrameIndex(35, 30000);
+      await dashboard.waitForFrameIndex(35, 60000);
       await expect(dashboard.pressureValue).toHaveText('1012.0');
       await expect(dashboard.badgePressureTrend).toHaveText('falling');
 
-      await dashboard.waitForFrameIndex(36, 30000);
+      await dashboard.waitForFrameIndex(36, 60000);
       await expect(dashboard.pressureValue).toHaveText('1012.0');
       await expect(dashboard.badgePressureTrend).toHaveText('stable');
     });

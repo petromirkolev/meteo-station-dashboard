@@ -11,4 +11,8 @@ export const test = base.extend<MyFixtures>({
   },
 });
 
+test.afterEach(async ({ page }) => {
+  await page.close();
+});
+
 export { expect };
