@@ -34,7 +34,7 @@ jobs:
       - name: Run State tests
         run: npm run pw:state
       - name: Run Resilence tests
-        run: npm run pw:resilence
+        run: npm run pw:resilience
       - name: Run Load tests
         run: npm run pw:load
       - uses: actions/upload-artifact@v4
