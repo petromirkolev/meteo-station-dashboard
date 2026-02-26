@@ -14,7 +14,7 @@ Real-time **Meteo + Comfort + Air/Noise** dashboard with **Replay Mode** (CI-saf
 - Temperature (°C)
 - Humidity (%)
 - Pressure (hPa)
-- Gas/Air index (raw ADC → normalized later)
+- Gas/Air index
 - (Planned) Light
 - (Planned) Noise index + spike events
 
@@ -40,31 +40,30 @@ Real-time **Meteo + Comfort + Air/Noise** dashboard with **Replay Mode** (CI-saf
 
 ### Bridge (Node.js)
 
-- Node.js + TypeScript
+- Node.js (CommonJS) + "ws" WebSocket server
 - Reads Serial via "serialport" (Live Mode)
 - Streams datasets from file (Replay Mode)
 - Broadcasts via WebSocket ("ws")
 
 ### Dashboard (Web)
 
-- TypeScript + HTML + CSS
-- WebSocket client for updates
-- "data-testid" attributes for stable Playwright selectors
-- Deterministic derived-metrics engine
+- HTML/CSS + JavaScript (ES modules)
 
 ### Testing
 
-- Playwright E2E runs **only in Replay Mode** (CI-safe)
-- Bridge unit/integration tests for parsing + validation + replay streaming
+- E2E tests: Playwright + TypeScript
+- Playwright runs **only in Replay Mode** (CI-safe)
 
 ## Repo structure
 
-- "arduino/" — Arduino sketches + wiring notes
-- "bridge/" — Serial reader + schema validation + WebSocket server + replay streamer
-- "dashboard/" — UI widgets + derived metrics + alerts/event log
-- "replay/" — recorded datasets (NDJSON frames)
-- "tests/" — Playwright E2E (targets Replay Mode)
-- "docs/" — architecture notes, schema docs, screenshots
+- "dashboard/" — frontend UI (served by the bridge)
+- "bridge/" — Node server (static + WebSocket + replay/live + recording)
+  - "bridge/lib/" — modular bridge logic (replay, recording, live serial, config, etc.)
+- "replay/" — NDJSON data
+  - "replay/sample.ndjson" — default replay data
+  - "replay/fixtures/" — test fixtures (deterministic inputs)
+  - "replay/recordings/" — recorded sessions (created by the bridge)
+- "tests/" — Playwright E2E (TypeScript)
 
 ## System contract (SensorFrame v1)
 
@@ -88,21 +87,15 @@ Fields:
 
 - gasRaw (number): MQ analog raw reading (index, not ppm)
 
-Bridge responsibilities:
+The bridge broadcasts JSON messages:
 
-- parse NDJSON lines
-
-- validate schema
-
-- attach ts (server timestamp) + source (live | replay)
-
-- broadcast over WebSocket
+- "{ type: "hello", ts, source }"
+- "{ type: "state", mode, recording, recordFile }"
+- "{ type: "frame", ts, source: "replay" | "live", frame: {...} }"
 
 Dashboard responsibilities:
 
-- render raw + derived metrics
-
-- trigger alerts + append event log
+- Renders raw + derived metrics from incoming "frame" messages.
 
 ## Getting started
 
@@ -158,7 +151,16 @@ Tests (Replay Mode only)
 cd tests
 npm install
 npx playwright install
-npx playwright test || npx playwright test --ui
+npm run pw:smoke
+npm run pw:replay
+npm run pw:formatting
+npm run pw:derived:hi
+npm run pw:derived:dew
+npm run pw:derived:comfort
+npm run pw:derived:trends
+npm run pw:state
+npm run pw:resilience
+npm run pw:load
 ```
 
 Note: command names may change as the repo matures; the principle stays: Replay Mode is the default dev/test path.
