@@ -16,6 +16,8 @@ export class Dashboard {
   readonly tempTrend: Locator;
   readonly humidityTrend: Locator;
   readonly badgePressureTrend: Locator;
+  readonly recordButton: Locator;
+  readonly recordLabel: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -39,6 +41,8 @@ export class Dashboard {
     this.badgePressureTrend = this.page.locator(
       '[data-testid="badge-pressure-trend"]',
     );
+    this.recordButton = this.page.locator('[data-testid="record-data"]');
+    this.recordLabel = this.recordButton.locator('.record__label');
   }
 
   async goto(): Promise<void> {
@@ -49,6 +53,7 @@ export class Dashboard {
     await this.page.addInitScript(() => {
       (window as any).__wsMsgs = [];
       (window as any).__wsFrames = [];
+      (window as any).__wsStates = [];
 
       const Orig = window.WebSocket;
       class WS extends Orig {
@@ -65,6 +70,8 @@ export class Dashboard {
               if (msg?.type === 'frame' && msg?.frame) {
                 (window as any).__wsFrames.push(msg.frame);
               }
+
+              if (msg?.type === 'state') (window as any).__wsStates.push(msg);
             } catch {}
           });
         }
@@ -106,5 +113,32 @@ export class Dashboard {
 
   async waitForFrameIndex(i: number, timeout = 10000) {
     await this.waitForFrames(i + 1, timeout);
+  }
+
+  async waitForStateCount(n: number, timeout = 10000) {
+    await this.page.waitForFunction(
+      (count) => ((window as any).__wsStates || []).length >= count,
+      n,
+      { timeout },
+    );
+  }
+
+  async getLastState() {
+    return this.page.evaluate(() => {
+      const arr = (window as any).__wsStates || [];
+      return arr[arr.length - 1] || null;
+    });
+  }
+
+  async waitForRecordingState(isOn: boolean, timeout = 10000) {
+    await this.page.waitForFunction(
+      (on) => {
+        const arr = (window as any).__wsStates || [];
+        const last = arr[arr.length - 1];
+        return last && last.recording === on;
+      },
+      isOn,
+      { timeout },
+    );
   }
 }
