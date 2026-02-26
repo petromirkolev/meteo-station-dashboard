@@ -11,9 +11,9 @@ import { controller } from './controller.js';
  * @returns {void}
  */
 
-const recordButton = document.querySelector('[data-testid="record-data"]');
-
 function bindEvents() {
+  const recordButton = document.querySelector('[data-testid="record-data"]');
+
   const wsUrl =
     (location.protocol === 'https:' ? 'wss://' : 'ws://') +
     location.host +
@@ -50,11 +50,11 @@ function bindEvents() {
     }
 
     if (msg.type === 'state') {
-      recordButton.getAttribute('aria-pressed') === msg.recording;
+      if (!recordButton) return;
       recordButton.setAttribute('aria-pressed', String(msg.recording));
-      recordButton.querySelector('.record__label').textContent = msg.recording
-        ? 'STOP'
-        : 'RECORD';
+      const label = recordButton.querySelector('.record__label');
+      if (label) label.textContent = msg.recording ? 'STOP' : 'RECORD';
+      return;
     }
 
     if (msg.type !== 'hello') return;
