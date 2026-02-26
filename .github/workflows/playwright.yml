@@ -35,6 +35,8 @@ jobs:
         run: npm run pw:state
       - name: Run Resilence tests
         run: npm run pw:resilence
+      - name: Run Load tests
+        run: npm run pw:load
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
