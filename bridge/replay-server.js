@@ -13,6 +13,7 @@ const { startMode } = require('./lib/mode');
 // Replay control (start only after first WS client connects)
 let replayCtrl = null;
 let replayStarted = false;
+let clientCount = 0;
 
 const cfg = getConfig();
 
@@ -66,6 +67,8 @@ wss.on('connection', (ws) => {
     JSON.stringify({ type: 'state', mode: cfg.MODE, recording, recordFile }),
   );
 
+  clientCount++;
+
   // Start replay only after the first client connects (for Playwright compatibility)
   if (cfg.MODE === 'replay' && !replayStarted) {
     replayStarted = true;
@@ -89,6 +92,16 @@ wss.on('connection', (ws) => {
 
     if (msg?.type === 'control' && msg?.action === 'record') {
       recorder.toggle();
+    }
+  });
+
+  ws.on('close', () => {
+    clientCount--;
+
+    if (cfg.MODE === 'replay' && clientCount <= 0) {
+      replayCtrl?.stop?.();
+      replayCtrl = null;
+      clientCount = 0;
     }
   });
 });
