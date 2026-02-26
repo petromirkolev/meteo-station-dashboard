@@ -101,6 +101,7 @@ wss.on('connection', (ws) => {
     if (cfg.MODE === 'replay' && clientCount <= 0) {
       replayCtrl?.stop?.();
       replayCtrl = null;
+      replayStarted = false;
       clientCount = 0;
     }
   });
