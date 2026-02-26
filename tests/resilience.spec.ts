@@ -16,4 +16,24 @@ test.describe('Resilience / defensive behavior suite', () => {
       })
       .toBe('--.-');
   });
+
+  test('Non-numeric / NaN values are handled properly', async ({
+    dashboard,
+  }) => {
+    test.setTimeout(60_000);
+
+    await dashboard.goto();
+
+    await expect
+      .poll(async () => (await dashboard.tempValue.textContent())?.trim(), {
+        timeout: 25_000,
+      })
+      .toBe('--.-');
+
+    await expect
+      .poll(async () => (await dashboard.gasValue.textContent())?.trim(), {
+        timeout: 25_000,
+      })
+      .toBe('----');
+  });
 });
