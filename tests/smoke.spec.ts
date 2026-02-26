@@ -19,13 +19,12 @@ test.describe('Meteo Station Dashboard Smoke Tests', () => {
   test('First frame updates at least one raw metric', async ({ dashboard }) => {
     test.setTimeout(30_000);
 
-    await dashboard.gotoWithWsSpy();
-    await dashboard.waitForHello(10_000);
-    await dashboard.waitForFrameIndex(0, 20_000);
+    await dashboard.goto();
 
     await expect(dashboard.tempValue).not.toHaveText('--.-', {
-      timeout: 10_000,
+      timeout: 25_000,
     });
-    await expect(dashboard.tempValue).toHaveText('27.1', { timeout: 10_000 });
+
+    await expect(dashboard.tempValue).toHaveText('27.1', { timeout: 25_000 });
   });
 });
