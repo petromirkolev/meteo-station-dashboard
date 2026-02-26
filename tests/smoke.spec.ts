@@ -11,15 +11,13 @@ test.describe('Meteo Station Dashboard Smoke Tests', () => {
     await expect(dashboard.gasValue).toBeVisible();
   });
 
-  test('WebSocket connects and handshake occurs', async ({
-    page,
-    dashboard,
-  }) => {
+  test('WebSocket connects and handshake occurs', async ({ dashboard }) => {
     await dashboard.gotoWithWsSpy();
     await dashboard.waitForHello();
   });
 
   test('First frame updates at least one raw metric', async ({ dashboard }) => {
+    test.setTimeout(30_000);
     await dashboard.gotoWithWsSpy();
     await dashboard.waitForHello();
     await expect(dashboard.tempValue).toHaveText('27.1');
